@@ -25,6 +25,7 @@ import 'package:picos/widgets/picos_ink_well_button.dart';
 import 'package:picos/widgets/picos_label.dart';
 import 'package:picos/widgets/picos_screen_frame.dart';
 import 'package:picos/widgets/picos_text_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// This is the screen for the user's profile information.
 class ProfileScreen extends StatefulWidget {
@@ -38,6 +39,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool error = false;
   bool success = false;
+  bool strong = false;
 
   TextEditingController newPassword = TextEditingController();
   TextEditingController newPasswordRepeat = TextEditingController();
@@ -71,6 +73,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     setState(() {
                       error = true;
                     });
+                  } else if (!_isStrongPassword(newPassword.text)) {
+                    setState(() {
+                      strong = false;
+                    });
                   } else {
                     currentUser.password = newPassword.text;
                     ParseResponse responseSaveNewPassword =
@@ -78,27 +84,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (responseSaveNewPassword.success) {
                       setState(() {
                         error = false;
+                        strong = true;
                         success = !error;
                       });
                     }
                   }
+                } else {
+                  setState(() {
+                    error = true;
+                  });
                 }
               },
             ),
-            error
-                ? const Text(
-                    'Neue Passwörter stimmen nicht überein!',
-                    style: TextStyle(color: Color(0xFFe63329)),
-                  )
-                : success
-                    ? const Text(
-                        'Neues Passwort wurde erfolgreich gespeichert!',
-                        style: TextStyle(color: Colors.lightGreen),
-                      )
-                    : const Text(' '),
+            if (error)
+              _buildError(context)
+            else if (success)
+              _buildSuccess(context)
+            else if (strong)
+              _buildStrong(context),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildError(BuildContext context) {
+    return Text(
+      AppLocalizations.of(context)!.passwordMismatchErrorMessage,
+      style: const TextStyle(color: Color(0xFFe63329)),
+    );
+  }
+
+  Widget _buildSuccess(BuildContext context) {
+    return Text(
+      AppLocalizations.of(context)!.passwordSavedSuccessMessage,
+      style: const TextStyle(color: Colors.lightGreen),
+    );
+  }
+
+  Widget _buildStrong(BuildContext context) {
+    return const Text(
+      'Das Passwort muss klein und groß Buchstaben enthalten, sowie Sonderzeichen und Zahlen',
+      style: TextStyle(color: Colors.lightGreen),
+    );
+  }
+
+  bool _isStrongPassword(String password) {
+    if (password.length < 8) {
+      return false;
+    }
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      return false;
+    }
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      return false;
+    }
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      return false;
+    }
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      return false;
+    }
+    return true;
   }
 }

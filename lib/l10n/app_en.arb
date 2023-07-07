@@ -1092,5 +1092,13 @@
     "myProfile": "My profile",
     "@myProfile": {
         "description": "My profile"
+    },
+    "passwordSavedSuccessMessage": "The new password has been successfully saved!",
+    "@passwordSavedSuccessMessage": {
+        "description": "The new password has been successfully saved!"
+    },
+    "passwordMismatchErrorMessage": "The new passwords do not match!",
+    "@passwordMismatchErrorMessage": {
+        "description": "The new passwords do not match!"
     }
 }
