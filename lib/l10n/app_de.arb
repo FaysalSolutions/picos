@@ -163,7 +163,7 @@
     "bad": "Schlecht",
     "terrible": "Schrecklich",
     "tips": "Tipps für einen gesunden Alltag",
-    "drinkEnough": "Dein Körper besteht hauptsächlich aus Wasser. Deshalb ist eine ausreichende Wasserzufuhr für eine optimale Körperfunktion wichtig.",
+    "drinkEnough": "Ausreichend trinken: Trinken Sie mindestens 2 Liter Wasser pro Tag. Der menschliche Körper besteht zu zwei Dritteln aus Wasser. Der Stoff dient unter anderem als Transportmittel für Harn und Blut sowie als Lösungsmittel.",
     "welcomeToPICOS": "Herzlich Willkommen bei PICOS",
     "thankYouForParticipation": "Vielen Dank, dass Sie sich für die Teilnahme an dem Projekt DISTANCE entschieden haben. Wir wünschen viel Freude bei der Nutzung der PICOS App!",
     "wrongCredentials": "Falsche Zugangsdaten",
@@ -244,12 +244,6 @@
     "bruteforceLock": "Der Account ist zur Sicherheit gesperrt. Bitte versuchen Sie es in 5 Minuten erneut.",
     "connectionError": "Verbindungsfehler",
     "myProfile": "Mein Profil",
-    "newPassword": "Neues Passwort",
-    "newPasswordRepeat": "Neues Passwort wiederholen",
-    "changePassword": "Passwort ändern",
     "passwordSavedSuccessMessage": "Neues Passwort wurde erfolgreich gespeichert!",
-    "passwordMismatchErrorMessage": "Neue Passwörter stimmen nicht überein!",
-    "strongPassword": "Ihr Passwort muss aus Groß-, Kleinbuchstaben, Sonderzeichen, Zahlen und insgesamt aus mindestens 8 Zeichen bestehen!",
-    "passwordSavedFailureMessage": "Neues Passwort konnte nicht gespeichert werden!",
-    "allFieldsMustbeFilled": "Alle Felder müssen ausgefüllt sein!"
+    "passwordMismatchErrorMessage": "Neue Passwörter stimmen nicht überein!"
 }

@@ -765,9 +765,9 @@
     "@tips": {
         "description": "Tips for a healthy everyday life"
     },
-    "drinkEnough": "Your body consists mainly of water. Therefore, sufficient water intake is important for optimal bodily function.",
+    "drinkEnough": "Drink enough: Drink at least 2 liters of water per day. The human body consists of two-thirds water. The substance serves, among other things, as a means of transport for urine and blood and as a solvent.",
     "@drinkEnough": {
-        "description": "Your body consists mainly of water. Therefore, sufficient water intake is important for optimal bodily function."
+        "description": "Drink enough: Drink at least 2 liters of water per day. The human body consists of two-thirds water. The substance serves, among other things, as a means of transport for urine and blood and as a solvent."
     },
     "welcomeToPICOS": "Welcome to PICOS",
     "@welcomeToPICOS": {
@@ -1074,7 +1074,7 @@
         "description": "Please check whether your entry is correct!"
     },
     "myPatients": "My Patients",
-    "@myPatients": {
+    "@checkValue": {
         "description": "My Patients"
     },
     "editPatientInformation": "Edit Patient Information",
@@ -1093,18 +1093,6 @@
     "@myProfile": {
         "description": "My profile"
     },
-    "newPassword": "New Password",
-    "@newPassword": {
-        "description": "New Password"
-    },
-    "newPasswordRepeat": "Repeat new Password",
-    "@newPasswordRepeat": {
-        "description": "Repeat new Password"
-    },
-    "changePassword": "Change Password",
-    "@changePassword": {
-        "description": "Change Password"
-    },
     "passwordSavedSuccessMessage": "The new password has been successfully saved!",
     "@passwordSavedSuccessMessage": {
         "description": "The new password has been successfully saved!"
@@ -1112,17 +1100,5 @@
     "passwordMismatchErrorMessage": "The new passwords do not match!",
     "@passwordMismatchErrorMessage": {
         "description": "The new passwords do not match!"
-    },
-    "strongPassword": "The new password must consist of lowercases, uppercases, special characters and at least 8 characters!",
-    "@strongPassword": {
-        "description": "The new password must consist of lowercases, uppercases, special characters and at least 8 characters!"
-    },
-    "passwordSavedFailureMessage": "New password could not be saved!",
-    "@passwordSavedFailureMessage": {
-        "description": "New password could not be saved!"
-    },
-    "allFieldsMustbeFilled": "All fields must be filled!",
-    "@allFieldsMustbeFilled": {
-        "description": "All fields must be filled!"
     }
 }

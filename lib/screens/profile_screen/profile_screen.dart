@@ -37,15 +37,99 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String errorMessage = '';
-  String successMessage = '';
+  bool error = false;
+  bool success = false;
+  bool strong = false;
 
-  TextEditingController newPassword = TextEditingController(text: '');
-  TextEditingController newPasswordRepeat = TextEditingController(text: '');
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController newPasswordRepeat = TextEditingController();
 
-  bool disabled = false;
+  @override
+  Widget build(BuildContext context) {
+    return PicosScreenFrame(
+      title: 'Profil',
+      body: PicosBody(
+        child: Column(
+          children: <Widget>[
+            const PicosLabel('Neues Passwort'),
+            PicosTextField(
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: true,
+              controller: newPassword,
+            ),
+            const PicosLabel('Neues Passwort wiederholen'),
+            PicosTextField(
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: true,
+              controller: newPasswordRepeat,
+            ),
+            PicosInkWellButton(
+              text: 'Passwort ändern',
+              onTap: () async {
+                ParseUser currentUser = Backend.user;
+                if (newPassword.text.isNotEmpty &&
+                    newPasswordRepeat.text.isNotEmpty) {
+                  if (newPassword.text != newPasswordRepeat.text) {
+                    setState(() {
+                      error = true;
+                    });
+                  } else if (!_isStrongPassword(newPassword.text)) {
+                    setState(() {
+                      strong = false;
+                    });
+                  } else {
+                    currentUser.password = newPassword.text;
+                    ParseResponse responseSaveNewPassword =
+                        await currentUser.save();
+                    if (responseSaveNewPassword.success) {
+                      setState(() {
+                        error = false;
+                        strong = true;
+                        success = !error;
+                      });
+                    }
+                  }
+                } else {
+                  setState(() {
+                    error = true;
+                  });
+                }
+              },
+            ),
+            if (error)
+              _buildError(context)
+            else if (success)
+              _buildSuccess(context)
+            else if (strong)
+              _buildStrong(context),
+          ],
+        ),
+      ),
+    );
+  }
 
-  bool isStrongPassword(String password) {
+  Widget _buildError(BuildContext context) {
+    return Text(
+      AppLocalizations.of(context)!.passwordMismatchErrorMessage,
+      style: const TextStyle(color: Color(0xFFe63329)),
+    );
+  }
+
+  Widget _buildSuccess(BuildContext context) {
+    return Text(
+      AppLocalizations.of(context)!.passwordSavedSuccessMessage,
+      style: const TextStyle(color: Colors.lightGreen),
+    );
+  }
+
+  Widget _buildStrong(BuildContext context) {
+    return const Text(
+      'Das Passwort muss klein und groß Buchstaben enthalten, sowie Sonderzeichen und Zahlen',
+      style: TextStyle(color: Colors.lightGreen),
+    );
+  }
+
+  bool _isStrongPassword(String password) {
     if (password.length < 8) {
       return false;
     }
@@ -61,102 +145,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!password.contains(RegExp(r'[0-9]'))) {
       return false;
     }
-
     return true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PicosScreenFrame(
-      title: AppLocalizations.of(context)!.myProfile,
-      body: PicosBody(
-        child: Column(
-          children: <Widget>[
-            PicosLabel(AppLocalizations.of(context)!.newPassword),
-            PicosTextField(
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: true,
-              controller: newPassword,
-            ),
-            PicosLabel(AppLocalizations.of(context)!.newPasswordRepeat),
-            PicosTextField(
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: true,
-              controller: newPasswordRepeat,
-            ),
-            PicosInkWellButton(
-              text: AppLocalizations.of(context)!.changePassword,
-              disabled: disabled,
-              onTap: () async {
-                ParseUser currentUser = Backend.user;
-                if (newPassword.text.isNotEmpty &&
-                    newPasswordRepeat.text.isNotEmpty) {
-                  if (newPassword.text != newPasswordRepeat.text) {
-                    setState(() {
-                      errorMessage = AppLocalizations.of(context)!
-                          .passwordMismatchErrorMessage;
-                      successMessage = '';
-                      disabled = false;
-                    });
-                  } else {
-                    if (!isStrongPassword(newPassword.text)) {
-                      setState(() {
-                        errorMessage =
-                            AppLocalizations.of(context)!.strongPassword;
-                        successMessage = '';
-                        disabled = false;
-                      });
-                    } else {
-                      currentUser.password = newPassword.text;
-
-                      setState(() {
-                        disabled = true;
-                      });
-
-                      ParseResponse responseSaveNewPassword =
-                          await currentUser.save();
-                      if (responseSaveNewPassword.success) {
-                        Backend.logout();
-                        setState(() {
-                          errorMessage = '';
-                          successMessage = AppLocalizations.of(context)!
-                              .passwordSavedSuccessMessage;
-                          disabled = false;
-                        });
-                      } else {
-                        setState(() {
-                          errorMessage = AppLocalizations.of(context)!
-                              .passwordSavedFailureMessage;
-                          successMessage = '';
-                          disabled = false;
-                        });
-                      }
-                    }
-                  }
-                } else {
-                  setState(() {
-                    errorMessage =
-                        AppLocalizations.of(context)!.allFieldsMustbeFilled;
-                    successMessage = '';
-                    disabled = false;
-                  });
-                }
-              },
-            ),
-            errorMessage != ''
-                ? Text(
-                    errorMessage,
-                    style: const TextStyle(color: Color(0xFFe63329)),
-                  )
-                : successMessage != ''
-                    ? Text(
-                        successMessage,
-                        style: const TextStyle(color: Colors.lightGreen),
-                      )
-                    : const Text(' '),
-          ],
-        ),
-      ),
-    );
   }
 }
