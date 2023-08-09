@@ -35,6 +35,14 @@
   "@toTheNight": {
     "description": "To the night"
   },
+  "unit": "Unit",
+  "@unit": {
+    "description": "Unit"
+  },
+  "medicalProduct": "Unit",
+  "@medicalProduct": {
+    "description": "Unit"
+  },
   "addMedication": "Add medication",
   "@addMedication": {
     "description": "Add medication"
@@ -974,6 +982,42 @@
   "connectionError": "Connection error",
   "@connectionError": {
     "description": "Connection error"
+    },
+    "myProfile": "My profile",
+    "@myProfile": {
+        "description": "My profile"
+    },
+    "newPassword": "New Password",
+    "@newPassword": {
+        "description": "New Password"
+    },
+    "newPasswordRepeat": "Repeat new Password",
+    "@newPasswordRepeat": {
+        "description": "Repeat new Password"
+    },
+    "changePassword": "Change Password",
+    "@changePassword": {
+        "description": "Change Password"
+    },
+    "passwordSavedSuccessMessage": "The new password has been successfully saved!",
+    "@passwordSavedSuccessMessage": {
+        "description": "The new password has been successfully saved!"
+    },
+    "passwordMismatchErrorMessage": "The new passwords do not match!",
+    "@passwordMismatchErrorMessage": {
+        "description": "The new passwords do not match!"
+    },
+    "strongPassword": "The new password must consist of lowercases, uppercases, special characters and at least 8 characters!",
+    "@strongPassword": {
+        "description": "The new password must consist of lowercases, uppercases, special characters and at least 8 characters!"
+    },
+    "passwordSavedFailureMessage": "New password could not be saved!",
+    "@passwordSavedFailureMessage": {
+        "description": "New password could not be saved!"
+    },
+    "allFieldsMustbeFilled": "All fields must be filled!",
+    "@allFieldsMustbeFilled": {
+        "description": "All fields must be filled!"
   },
   "inclusionCriteriaDistance": "Inclusion criteria DISTANCE",
   "@inclusionCriteriaDistance": {
@@ -991,6 +1035,10 @@
   "@age": {
     "description": "age"
   },
+  "birthDate": "birthday",
+  "@birthDate": {
+    "description": "birthday"
+  },
   "years": "years",
   "@years": {
     "description": "years"
@@ -1003,13 +1051,9 @@
   "@mainDiagnosis": {
     "description": "ICU main diagnosis"
   },
-  "progressDiagnosis": "ICU progress diagnosis",
-  "@progressDiagnosis": {
-    "description": "ICU progress diagnosis"
-  },
-  "coMorbidity": "Co-morbidity",
-  "@coMorbidity": {
-    "description": "Co-morbidity"
+  "ancillaryDiagnosis": "Ancillary diagnosis",
+  "@ancillaryDiagnosis": {
+    "description": "Ancillary diagnosis"
   },
   "icuaw": "ICUAW",
   "@icuaw": {
@@ -1250,10 +1294,6 @@
   "idealBodyWeight": "Ideal Body Weight",
   "@idealBodyWeight": {
     "description": "Ideal Body Weight"
-  },
-  "reasonForDischarge": "Reason for Discharge",
-  "@reasonForDischarge": {
-    "description": "Reason for Discharge"
   },
   "admissionTimeICU": "Admission Time ICU",
   "@admissionTimeICU": {

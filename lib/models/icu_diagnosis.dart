@@ -21,13 +21,12 @@ import 'package:picos/models/abstract_database_object.dart';
 class ICUDiagnosis extends AbstractDatabaseObject {
   /// Creates an ICU Diagnosis object.
   const ICUDiagnosis({
+    required this.patientObjectId,
+    required this.doctorObjectId,
     this.mainDiagnosis,
-    this.progressDiagnosis,
-    this.coMorbidity,
     this.intensiveCareUnitAcquiredWeakness,
     this.postIntensiveCareSyndrome,
-    this.patientObjectId,
-    this.doctorObjectId,
+    this.ancillaryDiagnosis,
     String? objectId,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -39,17 +38,14 @@ class ICUDiagnosis extends AbstractDatabaseObject {
   /// The ICU main diagnosis.
   final String? mainDiagnosis;
 
-  /// The ICU progress diagnosis.
-  final String? progressDiagnosis;
-
-  /// The co-morbidity.
-  final String? coMorbidity;
-
   /// If the patient has ICUAW.
   final bool? intensiveCareUnitAcquiredWeakness;
 
   /// If the patient has PICS.
   final bool? postIntensiveCareSyndrome;
+
+  /// The ancillary Diagnosis
+  final List<dynamic>? ancillaryDiagnosis;
 
   /// Patient ObjectId
   final String? patientObjectId;
@@ -65,10 +61,9 @@ class ICUDiagnosis extends AbstractDatabaseObject {
   @override
   ICUDiagnosis copyWith({
     String? mainDiagnosis,
-    String? progressDiagnosis,
-    String? coMorbidity,
     bool? intensiveCareUnitAcquiredWeakness,
     bool? postIntensiveCareSyndrome,
+    List<dynamic>? ancillaryDiagnosis,
     String? patientObjectId,
     String? doctorObjectId,
     String? objectId,
@@ -77,12 +72,11 @@ class ICUDiagnosis extends AbstractDatabaseObject {
   }) {
     return ICUDiagnosis(
       mainDiagnosis: mainDiagnosis ?? this.mainDiagnosis,
-      progressDiagnosis: progressDiagnosis ?? this.progressDiagnosis,
-      coMorbidity: coMorbidity ?? this.coMorbidity,
       intensiveCareUnitAcquiredWeakness: intensiveCareUnitAcquiredWeakness ??
           this.intensiveCareUnitAcquiredWeakness,
       postIntensiveCareSyndrome:
           postIntensiveCareSyndrome ?? this.postIntensiveCareSyndrome,
+      ancillaryDiagnosis: ancillaryDiagnosis ?? this.ancillaryDiagnosis,
       patientObjectId: patientObjectId ?? this.patientObjectId,
       doctorObjectId: doctorObjectId ?? this.doctorObjectId,
       objectId: objectId ?? this.objectId,
@@ -94,19 +88,13 @@ class ICUDiagnosis extends AbstractDatabaseObject {
   @override
   List<Object> get props => <Object>[
         mainDiagnosis!,
-        progressDiagnosis!,
-        coMorbidity!,
         intensiveCareUnitAcquiredWeakness!,
         postIntensiveCareSyndrome!,
+        ancillaryDiagnosis!
       ];
 
   @override
   Map<String, dynamic> get databaseMapping => <String, dynamic>{
-        'ICU_Hd': mainDiagnosis,
-        'ICU_Vd': progressDiagnosis,
-        'CO_Morb': coMorbidity,
-        'ICU_AW': intensiveCareUnitAcquiredWeakness,
-        'PICS': postIntensiveCareSyndrome,
         'Patient': <String, String>{
           'objectId': patientObjectId!,
           '__type': 'Pointer',
@@ -117,5 +105,11 @@ class ICUDiagnosis extends AbstractDatabaseObject {
           '__type': 'Pointer',
           'className': '_User'
         },
+        if (mainDiagnosis != null) 'ICU_Hd': mainDiagnosis,
+        if (intensiveCareUnitAcquiredWeakness != null)
+          'ICU_AW': intensiveCareUnitAcquiredWeakness,
+        if (postIntensiveCareSyndrome != null)
+          'PICS': postIntensiveCareSyndrome,
+        if (ancillaryDiagnosis != null) 'Nebendiagnose': ancillaryDiagnosis
       };
 }

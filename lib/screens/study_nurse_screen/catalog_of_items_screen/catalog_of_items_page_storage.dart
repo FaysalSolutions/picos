@@ -17,47 +17,85 @@
 
 import 'package:flutter/material.dart';
 import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/blood_gas_analysis_page.dart';
-import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/icu_diagnosis.dart';
-import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/laboratory_values.dart';
-import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/medicaments.dart';
-import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/movement_data.dart';
-import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/respiration_parameters.dart';
-import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/vital_data.dart';
-
-import '../../../widgets/picos_form_of_address.dart';
+import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/icu_diagnosis_page.dart';
+import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/laboratory_values_page.dart';
+import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/movement_data_page.dart';
+import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/respiration_parameters_page.dart';
+import 'package:picos/screens/study_nurse_screen/catalog_of_items_screen/pages/vital_data_page.dart';
+import '../../../models/blood_gas_analysis_object.dart';
+import '../../../models/catalog_of_items_element.dart';
+import '../../../models/icu_diagnosis.dart';
+import '../../../models/labor_parameters.dart';
+import '../../../models/patient_data.dart';
+import '../../../models/respiratory_parameters_object.dart';
+import '../../../models/vital_signs_object.dart';
 import '../../../widgets/picos_page_view_item.dart';
 
 /// Manages the state of the Catalog of items pages.
 class CatalogOfItemsPageStorage {
   /// Creates CatalogOfItemsPageStorage.
-  CatalogOfItemsPageStorage(BuildContext context) {
+  CatalogOfItemsPageStorage({
+    required BuildContext context,
+    CatalogOfItemsElement? catalogOfItemsElement,
+  }) {
+    ICUDiagnosis? icuDiagnosis;
+    VitalSignsObject? vitalSignsObject1;
+    VitalSignsObject? vitalSignsObject2;
+    RespiratoryParametersObject? respiratoryParametersObject1;
+    RespiratoryParametersObject? respiratoryParametersObject2;
+    BloodGasAnalysisObject? bloodGasAnalysisObject1;
+    BloodGasAnalysisObject? bloodGasAnalysisObject2;
+    LaborParameters? laborParameters;
+    PatientData? movementData;
+    if (catalogOfItemsElement != null) {
+      icuDiagnosis = catalogOfItemsElement.icuDiagnosis;
+      vitalSignsObject1 = catalogOfItemsElement.vitalSignsObject1;
+      vitalSignsObject2 = catalogOfItemsElement.vitalSignsObject2;
+      respiratoryParametersObject1 =
+          catalogOfItemsElement.respiratoryParametersObject1;
+      respiratoryParametersObject2 =
+          catalogOfItemsElement.respiratoryParametersObject2;
+      bloodGasAnalysisObject1 = catalogOfItemsElement.bloodGasAnalysisObject1;
+      bloodGasAnalysisObject2 = catalogOfItemsElement.bloodGasAnalysisObject2;
+      laborParameters = catalogOfItemsElement.laborParameters;
+      movementData = catalogOfItemsElement.movementData;
+    }
+
     pages = <PicosPageViewItem>[
       PicosPageViewItem(
-        child: IcuDiagnosis(
-          initialCoMorbidity: coMorbidity,
-          initialIcuaw: intensiveCareUnitAcquiredWeakness,
-          initialMainDiagnosis: mainDiagnosis,
-          initialPics: postIntensiveCareSyndrome,
-          initialProgressDiagnosis: progressDiagnosis,
+        child: IcuDiagnosisPage(
+          initialIcuaw: icuDiagnosis?.intensiveCareUnitAcquiredWeakness,
+          initialMainDiagnosis: icuDiagnosis?.mainDiagnosis,
+          initialAncillaryDiagnosis: icuDiagnosis?.ancillaryDiagnosis,
+          initialPics: icuDiagnosis?.postIntensiveCareSyndrome,
           mainDiagnosisCallback: (String? value) {
             mainDiagnosis = value;
           },
-          progressDiagnosisCallback: (String? value) {
-            progressDiagnosis = value;
+          ancillaryDiagnosisCallback: (List<dynamic>? value) {
+            ancillaryDiagnosis = value;
           },
-          coMorbidityCallback: (String? value) {
-            coMorbidity = value;
-          },
-          icuawCallback: (bool value) {
+          icuawCallback: (bool? value) {
             intensiveCareUnitAcquiredWeakness = value;
           },
-          picsCallback: (bool value) {
+          picsCallback: (bool? value) {
             postIntensiveCareSyndrome = value;
           },
         ),
       ),
       PicosPageViewItem(
-        child: VitalData(
+        child: VitalDataPage(
+          initialCentralVenousPressure1:
+              vitalSignsObject1?.centralVenousPressure,
+          initialCentralVenousPressure2:
+              vitalSignsObject2?.centralVenousPressure,
+          initialDap1: vitalSignsObject1?.diastolicArterialPressure,
+          initialDap2: vitalSignsObject2?.diastolicArterialPressure,
+          initialHeartRate1: vitalSignsObject1?.heartRate,
+          initialHeartRate2: vitalSignsObject2?.heartRate,
+          initialMap1: vitalSignsObject1?.meanArterialPressure,
+          initialMap2: vitalSignsObject2?.meanArterialPressure,
+          initialSap1: vitalSignsObject1?.systolicArterialPressure,
+          initialSap2: vitalSignsObject2?.systolicArterialPressure,
           centralVenousPressureCallback1: (double? value) {
             centralVenousPressure1 = value;
           },
@@ -88,25 +126,20 @@ class CatalogOfItemsPageStorage {
           heartRateCallback2: (double? value) {
             heartRate2 = value;
           },
-          initialCentralVenousPressure1: centralVenousOxygenSaturation1,
-          initialCentralVenousPressure2: centralVenousPressure2,
-          initialDap1: diastolicArterialPressure1,
-          initialDap2: diastolicArterialPressure2,
-          initialHeartRate1: heartRate1,
-          initialHeartRate2: heartRate2,
-          initialMap1: meanArterialPressure1,
-          initialMap2: meanArterialPressure2,
-          initialSap1: systolicArterialPressure1,
-          initialSap2: systolicArterialPressure2,
         ),
       ),
       PicosPageViewItem(
-        child: RespirationParameters(
-          initialTidalVolume: tidalVolume,
-          initialRespiratoryRate1: respiratoryRate1,
-          initialRespiratoryRate2: respiratoryRate2,
-          initialOxygenSaturation1: oxygenSaturation1,
-          initialOxygenSaturation2: oxygenSaturation2,
+        child: RespirationParametersPage(
+          initialTidalVolume:
+              tidalVolume ?? respiratoryParametersObject1?.tidalVolume,
+          initialRespiratoryRate1:
+              respiratoryRate1 ?? respiratoryParametersObject1?.respiratoryRate,
+          initialRespiratoryRate2:
+              respiratoryRate2 ?? respiratoryParametersObject2?.respiratoryRate,
+          initialOxygenSaturation1: oxygenSaturation1 ??
+              respiratoryParametersObject1?.oxygenSaturation,
+          initialOxygenSaturation2: oxygenSaturation2 ??
+              respiratoryParametersObject2?.oxygenSaturation,
           tidalVolumenCallback: (double? value) {
             tidalVolume = value;
           },
@@ -126,28 +159,36 @@ class CatalogOfItemsPageStorage {
       ),
       PicosPageViewItem(
         child: BloodGasAnalysisPage(
-          initialArterialOxygenSaturation1: arterialOxygenSaturation1,
-          initialArterialOxygenSaturation2: arterialOxygenSaturation2,
-          initialCentralVenousOxygenSaturation1: centralVenousOxygenSaturation1,
-          initialCentralVenousOxygenSaturation2: centralVenousOxygenSaturation2,
-          initialPartialPressureOfOxygen1: partialPressureOfOxygen1,
-          initialPartialPressureOfOxygen2: partialPressureOfOxygen2,
+          initialArterialOxygenSaturation1:
+              bloodGasAnalysisObject1?.arterialOxygenSaturation,
+          initialArterialOxygenSaturation2:
+              bloodGasAnalysisObject2?.arterialOxygenSaturation,
+          initialCentralVenousOxygenSaturation1:
+              bloodGasAnalysisObject1?.centralVenousOxygenSaturation,
+          initialCentralVenousOxygenSaturation2:
+              bloodGasAnalysisObject2?.centralVenousOxygenSaturation,
+          initialPartialPressureOfOxygen1:
+              bloodGasAnalysisObject1?.partialPressureOfOxygen,
+          initialPartialPressureOfOxygen2:
+              bloodGasAnalysisObject2?.partialPressureOfOxygen,
           initialPartialPressureOfCarbonDioxide1:
-              partialPressureOfCarbonDioxide1,
+              bloodGasAnalysisObject1?.partialPressureOfCarbonDioxide,
           initialPartialPressureOfCarbonDioxide2:
-              partialPressureOfCarbonDioxide2,
-          initialarterialBaseExcess1: arterialBaseExcess1,
-          initialarterialBaseExcess2: arterialBaseExcess2,
-          initialarterialPH1: arterialPH1,
-          initialarterialPH2: arterialPH2,
+              bloodGasAnalysisObject2?.partialPressureOfCarbonDioxide,
+          initialarterialBaseExcess1:
+              bloodGasAnalysisObject1?.arterialBaseExcess,
+          initialarterialBaseExcess2:
+              bloodGasAnalysisObject2?.arterialBaseExcess,
+          initialarterialPH1: bloodGasAnalysisObject1?.arterialPH,
+          initialarterialPH2: bloodGasAnalysisObject2?.arterialPH,
           initialArterialSerumBicarbonateConcentration1:
-              arterialSerumBicarbonateConcentration1,
+              bloodGasAnalysisObject1?.arterialSerumBicarbonateConcentration,
           initialArterialSerumBicarbonateConcentration2:
-              arterialSerumBicarbonateConcentration2,
-          initialArterialLactate1: arterialLactate1,
-          initialArterialLacatate2: arterialLactate2,
-          initialBloodGlucoseLevel1: bloodGlucoseLevel1,
-          initialBloodGlucoseLevel2: bloodGlucoseLevel2,
+              bloodGasAnalysisObject2?.arterialSerumBicarbonateConcentration,
+          initialArterialLactate1: bloodGasAnalysisObject1?.arterialLactate,
+          initialArterialLactate2: bloodGasAnalysisObject2?.arterialLactate,
+          initialBloodGlucoseLevel1: bloodGasAnalysisObject1?.bloodGlucoseLevel,
+          initialBloodGlucoseLevel2: bloodGasAnalysisObject2?.bloodGlucoseLevel,
           arterialOxygenSaturationCallback1: (double? value) {
             arterialOxygenSaturation1 = value;
           },
@@ -205,7 +246,38 @@ class CatalogOfItemsPageStorage {
         ),
       ),
       PicosPageViewItem(
-        child: LaboratoryValues(
+        child: LaboratoryValuesPage(
+          initialLeukocyteCount: laborParameters?.leukocyteCount,
+          initialLymphocyteCount: laborParameters?.lymphocyteCount,
+          initialLymphocytePercentage: laborParameters?.lymphocytePercentage,
+          initialPlateletCount: laborParameters?.plateletCount,
+          initialcReactiveProteinLevel: laborParameters?.cReactiveProteinLevel,
+          initialProcalcitoninLevel: laborParameters?.procalcitoninLevel,
+          initialInterleukin: laborParameters?.interleukin,
+          initialBloodUreaNitrogen: laborParameters?.bloodUreaNitrogen,
+          initialCreatinine: laborParameters?.creatinine,
+          initialHeartFailureMarker: laborParameters?.heartFailureMarker,
+          initialHeartFailureMarkerNTProBNP:
+              laborParameters?.heartFailureMarkerNTProBNP,
+          initialBilirubinTotal: laborParameters?.bilirubinTotal,
+          initialHemoglobin: laborParameters?.hemoglobin,
+          initialHematocrit: laborParameters?.hematocrit,
+          initialAlbumin: laborParameters?.albumin,
+          initialGOTASAT: laborParameters?.gotASAT,
+          initialGPTALAT: laborParameters?.gptALAT,
+          initialTroponin: laborParameters?.troponin,
+          initialCreatineKinase: laborParameters?.creatineKinase,
+          initialMyocardialInfarctionMarkerCKMB:
+              laborParameters?.myocardialInfarctionMarkerCKMB,
+          initialLactateDehydrogenaseLevel:
+              laborParameters?.lactateDehydrogenaseLevel,
+          initialAmylaseLevel: laborParameters?.amylaseLevel,
+          initialLipaseLevel: laborParameters?.lipaseLevel,
+          initialDDimer: laborParameters?.dDimer,
+          initialInternationalNormalizedRatio:
+              laborParameters?.internationalNormalizedRatio,
+          initialPartialThromboplastinTime:
+              laborParameters?.partialThromboplastinTime,
           leukocyteCountCallback: (double? value) {
             leukocyteCount = value;
           },
@@ -287,62 +359,38 @@ class CatalogOfItemsPageStorage {
         ),
       ),
       PicosPageViewItem(
-        child: Medicaments(
-          plateletAggregationCallback: (String? value) {
-            plateletAggregation = value;
+        child: MovementDataPage(
+          initialBirthDate: movementData?.birthDate,
+          initialGender: movementData?.gender,
+          initialBodyWeight: movementData?.bodyWeight,
+          initialBodyHeight: movementData?.bodyHeight,
+          initialBodyMassIndex: movementData?.bmi,
+          initialIdealBodyWeight: movementData?.idealBMI,
+          initialPatientID: movementData?.patientID,
+          initialCaseNumber: movementData?.caseNumber,
+          initialAdmissionTime: movementData?.azpICU,
+          initialDischargeTime: movementData?.ezpICU,
+          initialVentilationDays: movementData?.ventilationDays,
+          initialAdmissionTimeToTheHospital: movementData?.azpKH,
+          initialDischargeTimeFromTheHospital:
+              dischargeTimeFromTheHospital ?? movementData?.ezpKH,
+          initialICD10Codes: movementData?.icd10Codes,
+          initialPatientLocation: movementData?.station,
+          initialHospitalLengthOfStay: movementData?.khLengthStay,
+          initialICULengthOfStay: movementData?.icuLengthStay,
+          initialReadmissionRateToTheICU: movementData?.wdaICU,
+          initialLungProtectiveVentilation70p: movementData?.lbgt70,
+          birthDateCallback: (DateTime? value) {
+            birthDate = value;
           },
-          noakCallback: (String? value) {
-            noak = value;
-          },
-          thrombosisprophylaxisCallback: (String? value) {
-            thrombosisProphylaxis = value;
-          },
-          antihypertensivesCallback: (String? value) {
-            antihypertensives = value;
-          },
-          antiarrythmicsCallback: (String? value) {
-            antiarrhythmics = value;
-          },
-          antidiabeticsCallback: (String? value) {
-            antidiabetics = value;
-          },
-          antiinfectivesCallback: (String? value) {
-            antiInfectives = value;
-          },
-          steroidsCallback: (String? value) {
-            steroids = value;
-          },
-          inhalativesCallback: (String? value) {
-            inhalatives = value;
-          },
-          analgesicsCallback: (String? value) {
-            analgesics = value;
-          },
-          initialPlateletAggregation: plateletAggregation,
-          initialNoak: noak,
-          initialThrombosisProphylaxis: thrombosisProphylaxis,
-          initialAntihypertensives: antihypertensives,
-          initialAntiarrhythmics: antiarrhythmics,
-          initialAntidiabetics: antidiabetics,
-          initialAntiInfectives: antiInfectives,
-          initialSteroids: steroids,
-          initialInhalatives: inhalatives,
-          initialAnalgesics: analgesics,
-        ),
-      ),
-      PicosPageViewItem(
-        child: MovementData(
-          ageCallback: (int? value) {
-            age = value;
-          },
-          genderCallback: (FormOfAddress? value) {
+          genderCallback: (String? value) {
             gender = value;
           },
           bodyWeightCallback: (double? value) {
             bodyWeight = value;
           },
           bodyHeightCallback: (double? value) {
-            height = value;
+            bodyHeight = value;
           },
           bodyMassIndexCallback: (double? value) {
             bodyMassIndex = value;
@@ -355,9 +403,6 @@ class CatalogOfItemsPageStorage {
           },
           caseNumberCallback: (String? value) {
             caseNumber = value;
-          },
-          reasonForDischargeCallback: (String? value) {
-            reasonForDischarge = value;
           },
           admissionTimeICUCallback: (DateTime? value) {
             admissionTime = value;
@@ -374,20 +419,14 @@ class CatalogOfItemsPageStorage {
           dischargeTimeHospitalCallback: (DateTime? value) {
             dischargeTimeFromTheHospital = value;
           },
-          icd10COdesCallback: (String? value) {
+          icd10COdesCallback: (List<dynamic>? value) {
             icd10Codes = value;
           },
           patientLocationCallback: (String? value) {
             patientLocation = value;
           },
           lungProtectiveVentilationGt70pCallback: (bool? value) {
-            lungProtectiveVentilation70 = value!;
-          },
-          icuMortalityCallback: (double? value) {
-            icuMortality = value;
-          },
-          hospitalMortalityCallback: (double? value) {
-            hospitalMortality = value;
+            lungProtectiveVentilation70 = value;
           },
           hospitalLengthOfStayCallback: (int? value) {
             hospitalLengthOfStay = value;
@@ -395,14 +434,8 @@ class CatalogOfItemsPageStorage {
           icuLengthOfStayCallback: (int? value) {
             icuLengthOfStay = value;
           },
-          readmissionRateICUCallback: (double? value) {
+          readmissionRateICUCallback: (bool? value) {
             readmissionRateToTheICU = value;
-          },
-          hospitalReadmissionCallback: (double? value) {
-            hospitalReadmission = value;
-          },
-          daysUntilWorkReuptakeCallback: (int? value) {
-            daysUntilWorkReuptake = value;
           },
         ),
       ),
@@ -421,17 +454,14 @@ class CatalogOfItemsPageStorage {
   /// The ICU main diagnosis.
   String? mainDiagnosis;
 
-  /// The ICU progress diagnosis.
-  String? progressDiagnosis;
-
-  /// The co-morbidity.
-  String? coMorbidity;
+  /// The ancillary diagnosis.
+  List<dynamic>? ancillaryDiagnosis;
 
   /// If the patient has ICUAW.
-  bool intensiveCareUnitAcquiredWeakness = false;
+  bool? intensiveCareUnitAcquiredWeakness;
 
   /// If the patient has PICS.
-  bool postIntensiveCareSyndrome = false;
+  bool? postIntensiveCareSyndrome;
 
   /// Last heart rate.
   double? heartRate1;
@@ -465,92 +495,212 @@ class CatalogOfItemsPageStorage {
 
   /// Tidal Volume
   double? tidalVolume;
+
+  /// Last Respitory Rate.
   double? respiratoryRate1;
+
+  /// Pre last Respitory Rate.
   double? respiratoryRate2;
+
+  /// Last Oxygen Saturation.
   double? oxygenSaturation1;
+
+  /// Pre last Oxygen Saturation.
   double? oxygenSaturation2;
 
+  /// Last Arterial Oxygen Saturation.
   double? arterialOxygenSaturation1;
+
+  /// Pre last Arterial Oxygen Saturation.
   double? arterialOxygenSaturation2;
+
+  /// Last Central Venous Oxygen Saturation.
   double? centralVenousOxygenSaturation1;
+
+  /// Pre last Central Venous Oxygen Saturation.
   double? centralVenousOxygenSaturation2;
+
+  /// Last Partial Pressure of Oxygen.
   double? partialPressureOfOxygen1;
+
+  /// Pre last Partial Pressure of Oxygen.
   double? partialPressureOfOxygen2;
+
+  /// Last Partial Pressure of Carbon Dioxide.
   double? partialPressureOfCarbonDioxide1;
+
+  /// Pre last Partial Pressure of Carbon Dioxide.
   double? partialPressureOfCarbonDioxide2;
+
+  /// Last Arterial Base Excess.
   double? arterialBaseExcess1;
+
+  /// Pre last Arterial Base Excess.
   double? arterialBaseExcess2;
+
+  /// Last Arterial PH.
   double? arterialPH1;
+  
+  /// Pre last Arterial PH.
   double? arterialPH2;
+
+  /// Last Arterial Seum Bicarbonate Concentration.
   double? arterialSerumBicarbonateConcentration1;
+
+  /// Pre last Arterial Serum Bicarbonate Concentration.
   double? arterialSerumBicarbonateConcentration2;
+
+  /// Last Arterial Lactate.
   double? arterialLactate1;
+
+  /// Pre last Arterial Lactate.
   double? arterialLactate2;
+
+  /// Last Blood GLucose Level.
   double? bloodGlucoseLevel1;
+
+  /// Pre last Blood Glucose Level.
   double? bloodGlucoseLevel2;
 
+  /// Leukocyte Count.
   double? leukocyteCount;
+
+  /// Lymphycyte Count.
   double? lymphocyteCount;
+
+  /// Lymphocyte Percentage.
   double? lymphocytePercentage;
+
+  /// Platelet Count.
   double? plateletCount;
+
+  /// cReactive Protein Level.
   double? cReactiveProteinLevel;
+
+  /// Procalcitonin Level.
   double? procalcitoninLevel;
+
+  /// Interleukin.
   double? interleukin;
+
+  /// Blood Urea Nitrogen.
   double? bloodUreaNitrogen;
+
+  /// Creatinine.
   double? creatinine;
+
+  /// Heart Failure Marker.
   double? heartFailureMarker;
+
+  /// Heart Failure Marker NT Pro BNP.
   double? heartFailureMarkerNTProBNP;
+
+  /// Bilirubin Total.
   double? bilirubinTotal;
+
+  /// Hemoglobin.
   double? hemoglobin;
+
+  /// Hematocrit.
   double? hematocrit;
+
+  /// Albumin.
   double? albumin;
+
+  /// gotASAT.
   double? gotASAT;
+
+  /// gptALAT.
   double? gptALAT;
+
+  /// Troponin.
   double? troponin;
+
+  /// Creatine Kinase.
   double? creatineKinase;
+
+  /// Myocardial Infarction Marker CKMB.
   double? myocardialInfarctionMarkerCKMB;
+
+  /// Lactatet Dehydrogenase Level.
   double? lactateDehydrogenaseLevel;
+
+  /// Amylase Level.
   double? amylaseLevel;
+
+  /// Lipase Level.
   double? lipaseLevel;
+
+  /// dDimer.
   double? dDimer;
+
+  /// International Normalized Ratio.
   double? internationalNormalizedRatio;
+
+  /// Partial Thromboplastin Time. 
   double? partialThromboplastinTime;
 
-  String? plateletAggregation;
-  String? noak;
-  String? thrombosisProphylaxis;
-  String? antihypertensives;
-  String? antiarrhythmics;
-  String? antidiabetics;
-  String? antiInfectives;
-  String? steroids;
-  String? inhalatives;
-  String? analgesics;
+  /// Patient's Birthdate.
+  DateTime? birthDate;
 
-  int? age;
-  FormOfAddress? gender;
+  /// Gender.
+  String? gender;
+
+  /// Patient's body weight.
   double? bodyWeight;
-  double? height;
+
+  /// Patient's body height.
+  double? bodyHeight;
+
+  /// Patient's body mass index.
   double? bodyMassIndex;
+
+  /// Patient's idead body weight.
   double? idealBodyWeight;
+
+  /// Patient'S ID.
   String? patientID;
+
+  /// Patient's case number.
   String? caseNumber;
-  String? reasonForDischarge;
+
+  /// Admission Time to the ICU.
   DateTime? admissionTime;
+
+  /// Discharge Time from the ICU
   DateTime? dischargeTime;
+
+  /// Ventilation Days.
   int? ventilationDays;
+
+  /// Admission Time to the Hospital.
   DateTime? admissionTimeToTheHospital;
+
+  /// Discharge Time from the Hospital.
   DateTime? dischargeTimeFromTheHospital;
-  String? icd10Codes;
+
+  /// ICD 10 Codes.
+  List<dynamic>? icd10Codes;
+
+  /// Patient Location.
   String? patientLocation;
-  bool lungProtectiveVentilation70 = false;
-  double? icuMortality;
-  double? hospitalMortality;
+  /// Lung Protective Ventilation greater than 70%.
+  bool? lungProtectiveVentilation70;
+
+  /// Length of Stay in Hospital.
   int? hospitalLengthOfStay;
+
+  /// Length of Stay in ICU.
   int? icuLengthOfStay;
-  double? readmissionRateToTheICU;
-  double? hospitalReadmission;
-  int? daysUntilWorkReuptake;
+
+  /// Readmission Rate to the ICU.
+  bool? readmissionRateToTheICU;
+
+  /// Readmission to the Hospital.
+  int? hospitalReadmission;
+
+  /// Institute Key.
+  String? instKey;
 
   /// The loaded pages.
   late List<PicosPageViewItem> pages;

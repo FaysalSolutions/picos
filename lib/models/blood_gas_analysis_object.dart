@@ -108,28 +108,22 @@ class BloodGasAnalysisObject extends AbstractDatabaseObject {
   }
 
   @override
-  List<Object> get props => <Object>[
-        arterialOxygenSaturation!,
-        centralVenousOxygenSaturation!,
-        partialPressureOfOxygen!,
-        partialPressureOfCarbonDioxide!,
-        arterialBaseExcess!,
-        arterialPH!,
-        arterialSerumBicarbonateConcentration!,
-        arterialLactate!,
-        bloodGlucoseLevel!
-      ];
+  List<Object> get props => <Object>[];
 
   @override
   Map<String, dynamic> get databaseMapping => <String, dynamic>{
-        'PaCO2_wTemp': partialPressureOfOxygen,
-        'BE': arterialBaseExcess,
-        'Bicarbonat': arterialSerumBicarbonateConcentration,
-        'SaO2': arterialOxygenSaturation,
-        'Laktat': arterialLactate,
-        'SzVO2': centralVenousOxygenSaturation,
-        'PaCO2_woTemp': partialPressureOfCarbonDioxide,
-        'pH': arterialPH,
-        'BloodSugar': bloodGlucoseLevel,
+        if (arterialBaseExcess != null) 'BE': arterialBaseExcess,
+        if (arterialSerumBicarbonateConcentration != null)
+          'Bicarbonat': arterialSerumBicarbonateConcentration,
+        if (arterialOxygenSaturation != null) 'SaO2': arterialOxygenSaturation,
+        if (arterialLactate != null) 'Laktat': arterialLactate,
+        if (centralVenousOxygenSaturation != null)
+          'SzVO2': centralVenousOxygenSaturation,
+        if (partialPressureOfCarbonDioxide != null)
+          'PaCO2_woTemp': partialPressureOfCarbonDioxide,
+        if (partialPressureOfOxygen != null)
+          'PaO2_woTemp': partialPressureOfOxygen,
+        if (arterialPH != null) 'pH': arterialPH,
+        if (bloodGlucoseLevel != null) 'BloodSugar': bloodGlucoseLevel,
       };
 }

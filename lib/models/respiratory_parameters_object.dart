@@ -37,7 +37,7 @@ class RespiratoryParametersObject extends AbstractDatabaseObject {
 
   /// Respiratory Rate.
   final double? respiratoryRate;
-  
+
   /// Oxygen SAturation.
   final double? oxygenSaturation;
 
@@ -74,8 +74,8 @@ class RespiratoryParametersObject extends AbstractDatabaseObject {
 
   @override
   Map<String, dynamic> get databaseMapping => <String, dynamic>{
-        'AF': respiratoryRate,
-        'VT': tidalVolume,
-        'SpO2': oxygenSaturation,
+        if (respiratoryRate != null) 'AF': respiratoryRate,
+        if (tidalVolume != null) 'VT': tidalVolume,
+        if (oxygenSaturation != null) 'SpO2': oxygenSaturation,
       };
 }

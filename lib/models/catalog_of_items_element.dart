@@ -18,7 +18,6 @@
 import 'package:picos/models/abstract_database_object.dart';
 import 'package:picos/models/icu_diagnosis.dart';
 import 'package:picos/models/labor_parameters.dart';
-import 'package:picos/models/medicaments.dart';
 import 'package:picos/models/patient_data.dart';
 import 'package:picos/models/respiratory_parameters.dart';
 import 'package:picos/models/respiratory_parameters_object.dart';
@@ -43,7 +42,6 @@ class CatalogOfItemsElement extends AbstractDatabaseObject {
     required this.bloodGasAnalysisObject2,
     required this.bloodGasAnalysis,
     required this.laborParameters,
-    required this.medicaments,
     required this.movementData,
     String? objectId,
     DateTime? createdAt,
@@ -53,31 +51,41 @@ class CatalogOfItemsElement extends AbstractDatabaseObject {
   /// The database table the objects are stored in.
   static const String databaseTable = '';
 
-  final ICUDiagnosis icuDiagnosis;
+  /// ICU Diagnosis.
+  final ICUDiagnosis? icuDiagnosis;
 
-  final VitalSignsObject vitalSignsObject1;
+  /// First Vital Signs Object.
+  final VitalSignsObject? vitalSignsObject1;
 
-  final VitalSignsObject vitalSignsObject2;
+  /// Second Vital Signs Object.
+  final VitalSignsObject? vitalSignsObject2;
 
-  final VitalSigns vitalSigns;
+  /// Vital Signs.
+  final VitalSigns? vitalSigns;
 
-  final RespiratoryParametersObject respiratoryParametersObject1;
+  /// First Respiratory Parameters Object.
+  final RespiratoryParametersObject? respiratoryParametersObject1;
 
-  final RespiratoryParametersObject respiratoryParametersObject2;
+  /// Second Respiratory Parameters Object.
+  final RespiratoryParametersObject? respiratoryParametersObject2;
 
-  final RespiratoryParameters respiratoryParameters;
+  /// Respiratory Parameters.
+  final RespiratoryParameters? respiratoryParameters;
 
-  final BloodGasAnalysisObject bloodGasAnalysisObject1;
+  /// First Blood Gas Analysis Object.
+  final BloodGasAnalysisObject? bloodGasAnalysisObject1;
 
-  final BloodGasAnalysisObject bloodGasAnalysisObject2;
+  /// Second Blood Gas Analysis Object.
+  final BloodGasAnalysisObject? bloodGasAnalysisObject2;
 
-  final BloodGasAnalysis bloodGasAnalysis;
+  /// Blood Gas Analysis.
+  final BloodGasAnalysis? bloodGasAnalysis;
 
-  final LaborParameters laborParameters;
+  /// Labor Parameters.
+  final LaborParameters? laborParameters;
 
-  final Medicaments medicaments;
-
-  final PatientData movementData;
+  /// Movement Data.
+  final PatientData? movementData;
 
   @override
   CatalogOfItemsElement copyWith({
@@ -92,7 +100,6 @@ class CatalogOfItemsElement extends AbstractDatabaseObject {
     BloodGasAnalysisObject? bloodGasAnalysisObject2,
     BloodGasAnalysis? bloodGasAnalysis,
     LaborParameters? laborParameters,
-    Medicaments? medicaments,
     PatientData? movementData,
     String? objectId,
     DateTime? createdAt,
@@ -115,7 +122,6 @@ class CatalogOfItemsElement extends AbstractDatabaseObject {
           bloodGasAnalysisObject2 ?? this.bloodGasAnalysisObject2,
       bloodGasAnalysis: bloodGasAnalysis ?? this.bloodGasAnalysis,
       laborParameters: laborParameters ?? this.laborParameters,
-      medicaments: medicaments ?? this.medicaments,
       movementData: movementData ?? this.movementData,
       objectId: objectId ?? this.objectId,
       createdAt: createdAt ?? this.createdAt,
@@ -128,19 +134,12 @@ class CatalogOfItemsElement extends AbstractDatabaseObject {
 
   @override
   List<Object> get props => <Object>[
-        icuDiagnosis,
-        vitalSignsObject1,
-        vitalSignsObject2,
-        vitalSigns,
-        respiratoryParametersObject1,
-        respiratoryParametersObject2,
-        respiratoryParameters,
-        bloodGasAnalysisObject1,
-        bloodGasAnalysisObject2,
-        bloodGasAnalysis,
-        laborParameters,
-        medicaments,
-        movementData
+        icuDiagnosis!,
+        vitalSigns!,
+        respiratoryParameters!,
+        bloodGasAnalysis!,
+        laborParameters!,
+        movementData!
       ];
 
   @override

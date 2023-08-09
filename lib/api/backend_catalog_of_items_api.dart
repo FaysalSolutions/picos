@@ -17,257 +17,214 @@
 
 import 'dart:async';
 
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:picos/api/backend_objects_api.dart';
 import 'package:picos/models/abstract_database_object.dart';
 import 'package:picos/models/blood_gas_analysis_object.dart';
 import 'package:picos/models/catalog_of_items_element.dart';
 import 'package:picos/models/icu_diagnosis.dart';
 import 'package:picos/models/labor_parameters.dart';
-import 'package:picos/models/medicaments.dart';
 import 'package:picos/models/patient_data.dart';
 import 'package:collection/collection.dart';
 import 'package:picos/models/respiratory_parameters_object.dart';
 import 'package:picos/models/vital_signs_object.dart';
+import 'package:picos/screens/study_nurse_screen/menu_screen/edit_patient_screen.dart';
 import 'package:picos/util/backend.dart';
 
 import 'package:picos/models/blood_gas_analysis.dart';
 import 'package:picos/models/respiratory_parameters.dart';
 import 'package:picos/models/vital_signs.dart';
 
-import '../models/patient.dart';
-
 /// API for calling the corresponding tables for the Catalog of Items.
 class BackendCatalogOfItemsApi extends BackendObjectsApi {
   @override
   Future<void> saveObject(AbstractDatabaseObject object) async {
+    BackendACL coiACL = BackendACL();
+    if (object.createdAt == null) {
+      coiACL.setWriteAccess(userId: BackendRole.doctor.id);
+      coiACL.setReadAccess(userId: BackendRole.doctor.id);
+      coiACL.setReadAccess(userId: EditPatientScreen.patientObjectId!);
+    }
+
     try {
-      /// ICUDiagnosis
-      dynamic responseICUDiagnosis = await Backend.saveObject(
-        (object as CatalogOfItemsElement).icuDiagnosis,
-      );
+      if ((object as CatalogOfItemsElement).icuDiagnosis != null) {
+        /// ICUDiagnosis
+        await Backend.saveObject(
+          object.icuDiagnosis!,
+          acl: coiACL,
+        );
+      }
+      VitalSignsObject? vitalSignsObject1;
+      VitalSignsObject? vitalSignsObject2;
+      if (object.vitalSignsObject1 != null) {
+        /// VitalSigns value 1
+        dynamic responseVitalSignsObject1 = await Backend.saveObject(
+          object.vitalSignsObject1!,
+          acl: coiACL,
+        );
+        vitalSignsObject1 = object.vitalSignsObject1!.copyWith(
+          objectId: responseVitalSignsObject1['objectId'],
+          createdAt: DateTime.tryParse(
+                responseVitalSignsObject1['createdAt'] ?? '',
+              ) ??
+              object.vitalSignsObject1!.createdAt,
+          updatedAt: DateTime.tryParse(
+                responseVitalSignsObject1['updatedAt'] ?? '',
+              ) ??
+              object.vitalSignsObject1!.updatedAt,
+        );
+      }
 
-      ICUDiagnosis icuDiagnosis = object.icuDiagnosis.copyWith(
-        objectId: responseICUDiagnosis['objectId'],
-        createdAt: DateTime.tryParse(responseICUDiagnosis['createdAt'] ?? '') ??
-            object.icuDiagnosis.createdAt,
-        updatedAt: DateTime.tryParse(responseICUDiagnosis['updatedAt'] ?? '') ??
-            object.icuDiagnosis.updatedAt,
-      );
+      if (object.vitalSignsObject2 != null) {
+        /// VitalSigns value 2
+        dynamic responseVitalSignsObject2 = await Backend.saveObject(
+          object.vitalSignsObject2!,
+          acl: coiACL,
+        );
 
-      /// VitalSigns value 1
-      dynamic responseVitalSignsObject1 = await Backend.saveObject(
-        object.vitalSignsObject1,
-      );
+        vitalSignsObject2 = object.vitalSignsObject2!.copyWith(
+          objectId: responseVitalSignsObject2['objectId'],
+          createdAt: DateTime.tryParse(
+                responseVitalSignsObject2['createdAt'] ?? '',
+              ) ??
+              object.vitalSignsObject2!.createdAt,
+          updatedAt: DateTime.tryParse(
+                responseVitalSignsObject2['updatedAt'] ?? '',
+              ) ??
+              object.vitalSignsObject2!.updatedAt,
+        );
+      }
 
-      VitalSignsObject vitalSignsObject1 = object.vitalSignsObject1.copyWith(
-        objectId: responseVitalSignsObject1['objectId'],
-        createdAt:
-            DateTime.tryParse(responseVitalSignsObject1['createdAt'] ?? '') ??
-                object.vitalSignsObject1.createdAt,
-        updatedAt:
-            DateTime.tryParse(responseVitalSignsObject1['updatedAt'] ?? '') ??
-                object.vitalSignsObject1.updatedAt,
-      );
+      if (object.vitalSigns != null) {
+        /// VitalSigns
+        object.vitalSigns!.value1 = vitalSignsObject1;
+        object.vitalSigns!.value2 = vitalSignsObject2;
+        await Backend.saveObject(
+          object.vitalSigns!,
+          acl: coiACL,
+        );
+      }
 
-      /// VitalSigns value 2
-      dynamic responseVitalSignsObject2 = await Backend.saveObject(
-        object.vitalSignsObject1,
-      );
+      RespiratoryParametersObject? respiratoryParametersObject1;
+      RespiratoryParametersObject? respiratoryParametersObject2;
+      if (object.respiratoryParametersObject1 != null) {
+        /// Respiratory parameters value 1
+        dynamic responseRespiratoryParametersObject1 = await Backend.saveObject(
+          object.respiratoryParametersObject1!,
+          acl: coiACL,
+        );
 
-      VitalSignsObject vitalSignsObject2 = object.vitalSignsObject1.copyWith(
-        objectId: responseVitalSignsObject2['objectId'],
-        createdAt:
-            DateTime.tryParse(responseVitalSignsObject2['createdAt'] ?? '') ??
-                object.vitalSignsObject1.createdAt,
-        updatedAt:
-            DateTime.tryParse(responseVitalSignsObject2['updatedAt'] ?? '') ??
-                object.vitalSignsObject1.updatedAt,
-      );
+        respiratoryParametersObject1 =
+            object.respiratoryParametersObject1!.copyWith(
+          objectId: responseRespiratoryParametersObject1['objectId'],
+          createdAt: DateTime.tryParse(
+                responseRespiratoryParametersObject1['createdAt'] ?? '',
+              ) ??
+              object.respiratoryParametersObject1!.createdAt,
+          updatedAt: DateTime.tryParse(
+                responseRespiratoryParametersObject1['updatedAt'] ?? '',
+              ) ??
+              object.respiratoryParametersObject1!.updatedAt,
+        );
+      }
 
-      /// VitalSigns
-      dynamic responseVitalSigns = await Backend.saveObject(
-        object.vitalSigns,
-      );
+      if (object.respiratoryParametersObject2 != null) {
+        /// Respiratory parameters value 2
+        dynamic responseRespiratoryParametersObject2 = await Backend.saveObject(
+          object.respiratoryParametersObject2!,
+          acl: coiACL,
+        );
 
-      VitalSigns vitalSigns = object.vitalSigns.copyWith(
-        objectId: responseVitalSigns['objectId'],
-        createdAt: DateTime.tryParse(responseVitalSigns['createdAt'] ?? '') ??
-            object.vitalSigns.createdAt,
-        updatedAt: DateTime.tryParse(responseVitalSigns['updatedAt'] ?? '') ??
-            object.vitalSigns.updatedAt,
-      );
+        respiratoryParametersObject2 =
+            object.respiratoryParametersObject2!.copyWith(
+          objectId: responseRespiratoryParametersObject2['objectId'],
+          createdAt: DateTime.tryParse(
+                responseRespiratoryParametersObject2['createdAt'] ?? '',
+              ) ??
+              object.respiratoryParametersObject2!.createdAt,
+          updatedAt: DateTime.tryParse(
+                responseRespiratoryParametersObject2['updatedAt'] ?? '',
+              ) ??
+              object.respiratoryParametersObject2!.updatedAt,
+        );
+      }
 
-      /// Respiratory parameters value 1
-      dynamic responseRespiratoryParametersObject1 = await Backend.saveObject(
-        object.respiratoryParametersObject1,
-      );
+      if (object.respiratoryParameters != null) {
+        /// Respiratory parameters
+        object.respiratoryParameters!.value1 = respiratoryParametersObject1;
+        object.respiratoryParameters!.value2 = respiratoryParametersObject2;
+        await Backend.saveObject(
+          object.respiratoryParameters!,
+          acl: coiACL,
+        );
+      }
 
-      RespiratoryParametersObject respiratoryParametersObject1 =
-          object.respiratoryParametersObject1.copyWith(
-        objectId: responseRespiratoryParametersObject1['objectId'],
-        createdAt: DateTime.tryParse(
-              responseRespiratoryParametersObject1['createdAt'] ?? '',
-            ) ??
-            object.respiratoryParametersObject1.createdAt,
-        updatedAt: DateTime.tryParse(
-              responseRespiratoryParametersObject1['updatedAt'] ?? '',
-            ) ??
-            object.respiratoryParametersObject1.updatedAt,
-      );
+      BloodGasAnalysisObject? bloodGasAnalysisObject1;
+      BloodGasAnalysisObject? bloodGasAnalysisObject2;
+      if (object.bloodGasAnalysisObject1 != null) {
+        /// Blood gas analysis value 1
+        dynamic responseBloodGasAnalysisObject1 = await Backend.saveObject(
+          object.bloodGasAnalysisObject1!,
+          acl: coiACL,
+        );
 
-      /// Respiratory parameters value 2
-      dynamic responseRespiratoryParametersObject2 = await Backend.saveObject(
-        object.respiratoryParametersObject2,
-      );
+        bloodGasAnalysisObject1 = object.bloodGasAnalysisObject1!.copyWith(
+          objectId: responseBloodGasAnalysisObject1['objectId'],
+          createdAt: DateTime.tryParse(
+                responseBloodGasAnalysisObject1['createdAt'] ?? '',
+              ) ??
+              object.bloodGasAnalysisObject1!.createdAt,
+          updatedAt: DateTime.tryParse(
+                responseBloodGasAnalysisObject1['updatedAt'] ?? '',
+              ) ??
+              object.bloodGasAnalysisObject1!.updatedAt,
+        );
+      }
 
-      RespiratoryParametersObject respiratoryParametersObject2 =
-          object.respiratoryParametersObject2.copyWith(
-        objectId: responseRespiratoryParametersObject2['objectId'],
-        createdAt: DateTime.tryParse(
-              responseRespiratoryParametersObject2['createdAt'] ?? '',
-            ) ??
-            object.respiratoryParametersObject2.createdAt,
-        updatedAt: DateTime.tryParse(
-              responseRespiratoryParametersObject2['updatedAt'] ?? '',
-            ) ??
-            object.respiratoryParametersObject2.updatedAt,
-      );
+      if (object.bloodGasAnalysisObject2 != null) {
+        /// Blood gas analysis value 2
+        dynamic responseBloodGasAnalysisObject2 = await Backend.saveObject(
+          object.bloodGasAnalysisObject2!,
+          acl: coiACL,
+        );
 
-      /// Respiratory parameters
-      dynamic responseRespiratoryParameters = await Backend.saveObject(
-        object.respiratoryParameters,
-      );
+        bloodGasAnalysisObject2 = object.bloodGasAnalysisObject2!.copyWith(
+          objectId: responseBloodGasAnalysisObject2['objectId'],
+          createdAt: DateTime.tryParse(
+                responseBloodGasAnalysisObject2['createdAt'] ?? '',
+              ) ??
+              object.bloodGasAnalysisObject2!.createdAt,
+          updatedAt: DateTime.tryParse(
+                responseBloodGasAnalysisObject2['updatedAt'] ?? '',
+              ) ??
+              object.bloodGasAnalysisObject2!.updatedAt,
+        );
+      }
 
-      RespiratoryParameters respiratoryParameters =
-          object.respiratoryParameters.copyWith(
-        objectId: responseRespiratoryParameters['objectId'],
-        createdAt: DateTime.tryParse(
-              responseRespiratoryParameters['createdAt'] ?? '',
-            ) ??
-            object.respiratoryParameters.createdAt,
-        updatedAt: DateTime.tryParse(
-              responseRespiratoryParameters['updatedAt'] ?? '',
-            ) ??
-            object.respiratoryParameters.updatedAt,
-      );
+      if (object.bloodGasAnalysis != null) {
+        /// Blood gas analysis
+        object.bloodGasAnalysis!.value1 = bloodGasAnalysisObject1;
+        object.bloodGasAnalysis!.value2 = bloodGasAnalysisObject2;
+        await Backend.saveObject(
+          object.bloodGasAnalysis!,
+          acl: coiACL,
+        );
+      }
 
-      /// Blood gas analysis value 1
-      dynamic responseBloodGasAnalysisObject1 = await Backend.saveObject(
-        object.bloodGasAnalysisObject1,
-      );
+      if (object.laborParameters != null) {
+        /// Labor parameters
+        await Backend.saveObject(
+          object.laborParameters!,
+          acl: coiACL,
+        );
+      }
 
-      BloodGasAnalysisObject bloodGasAnalysisObject1 =
-          object.bloodGasAnalysisObject1.copyWith(
-        objectId: responseBloodGasAnalysisObject1['objectId'],
-        createdAt: DateTime.tryParse(
-              responseBloodGasAnalysisObject1['createdAt'] ?? '',
-            ) ??
-            object.bloodGasAnalysisObject1.createdAt,
-        updatedAt: DateTime.tryParse(
-              responseBloodGasAnalysisObject1['updatedAt'] ?? '',
-            ) ??
-            object.bloodGasAnalysisObject1.updatedAt,
-      );
-
-      /// Blood gas analysis value 2
-      dynamic responseBloodGasAnalysisObject2 = await Backend.saveObject(
-        object.bloodGasAnalysisObject2,
-      );
-
-      BloodGasAnalysisObject bloodGasAnalysisObject2 =
-          object.bloodGasAnalysisObject2.copyWith(
-        objectId: responseBloodGasAnalysisObject2['objectId'],
-        createdAt: DateTime.tryParse(
-              responseBloodGasAnalysisObject2['createdAt'] ?? '',
-            ) ??
-            object.bloodGasAnalysisObject2.createdAt,
-        updatedAt: DateTime.tryParse(
-              responseBloodGasAnalysisObject2['updatedAt'] ?? '',
-            ) ??
-            object.bloodGasAnalysisObject2.updatedAt,
-      );
-
-      /// Blood gas analysis
-      dynamic responseBloodGasAnalysis = await Backend.saveObject(
-        object.bloodGasAnalysis,
-      );
-
-      BloodGasAnalysis bloodGasAnalysis = object.bloodGasAnalysis.copyWith(
-        objectId: responseBloodGasAnalysis['objectId'],
-        createdAt: DateTime.tryParse(
-              responseBloodGasAnalysis['createdAt'] ?? '',
-            ) ??
-            object.bloodGasAnalysis.createdAt,
-        updatedAt: DateTime.tryParse(
-              responseBloodGasAnalysis['updatedAt'] ?? '',
-            ) ??
-            object.bloodGasAnalysis.updatedAt,
-      );
-
-      /// Labor parameters
-      dynamic responseLaborParameters = await Backend.saveObject(
-        object.laborParameters,
-      );
-
-      LaborParameters laborParameters = object.laborParameters.copyWith(
-        objectId: responseLaborParameters['objectId'],
-        createdAt:
-            DateTime.tryParse(responseLaborParameters['createdAt'] ?? '') ??
-                object.laborParameters.createdAt,
-        updatedAt:
-            DateTime.tryParse(responseLaborParameters['updatedAt'] ?? '') ??
-                object.laborParameters.updatedAt,
-      );
-
-      /// Medicaments
-      dynamic responseMedicaments = await Backend.saveObject(
-        object.medicaments,
-      );
-
-      Medicaments medicaments = object.medicaments.copyWith(
-        objectId: responseMedicaments['objectId'],
-        createdAt: DateTime.tryParse(responseMedicaments['createdAt'] ?? '') ??
-            object.medicaments.createdAt,
-        updatedAt: DateTime.tryParse(responseMedicaments['updatedAt'] ?? '') ??
-            object.medicaments.updatedAt,
-      );
-
-      /// Movement data
-      dynamic responseMovementData = await Backend.saveObject(
-        object.movementData,
-      );
-
-      PatientData movementData = object.movementData.copyWith(
-        objectId: responseMovementData['objectId'],
-        createdAt: DateTime.tryParse(responseMovementData['createdAt'] ?? '') ??
-            object.movementData.createdAt,
-        updatedAt: DateTime.tryParse(responseMovementData['updatedAt'] ?? '') ??
-            object.movementData.updatedAt,
-      );
-
-      object = object.copyWith(
-        icuDiagnosis: icuDiagnosis,
-        vitalSignsObject1: vitalSignsObject1,
-        vitalSignsObject2: vitalSignsObject2,
-        vitalSigns: vitalSigns,
-        respiratoryParametersObject1: respiratoryParametersObject1,
-        respiratoryParametersObject2: respiratoryParametersObject2,
-        respiratoryParameters: respiratoryParameters,
-        bloodGasAnalysisObject1: bloodGasAnalysisObject1,
-        bloodGasAnalysisObject2: bloodGasAnalysisObject2,
-        bloodGasAnalysis: bloodGasAnalysis,
-        laborParameters: laborParameters,
-        medicaments: medicaments,
-        movementData: movementData,
-      );
-
-      int index = getIndex(object);
-
-      if (index >= 0) {
-        objectList[index] = object;
-        objectList = <AbstractDatabaseObject>[...objectList];
-      } else {
-        objectList = <AbstractDatabaseObject>[...objectList, object];
+      if (object.movementData != null) {
+        /// Movement data
+        await Backend.saveObject(
+          object.movementData!,
+          acl: coiACL,
+        );
       }
 
       dispatch();
@@ -278,285 +235,563 @@ class BackendCatalogOfItemsApi extends BackendObjectsApi {
 
   @override
   Future<Stream<List<AbstractDatabaseObject>>> getObjects() async {
-    try {
-      List<dynamic> responsePatient =
-          await Backend.getAll(Patient.databaseTable);
-      List<dynamic> responseICUDiagnosis =
-          await Backend.getAll(ICUDiagnosis.databaseTable);
-      List<dynamic> responseVitalSigns =
-          await Backend.getAll(VitalSigns.databaseTable);
-      List<dynamic> responseRespiratoryParameters =
-          await Backend.getAll(RespiratoryParameters.databaseTable);
-      List<dynamic> responseBloodGasAnalysis =
-          await Backend.getAll(BloodGasAnalysis.databaseTable);
-      List<dynamic> responseLaborParameters =
-          await Backend.getAll(LaborParameters.databaseTable);
-      List<dynamic> responseMedicaments =
-          await Backend.getAll(Medicaments.databaseTable);
-      List<dynamic> responseMovementData =
-          await Backend.getAll(PatientData.databaseTable);
+    return getObjectsStream();
+  }
 
-      List<Patient> patientResults = <Patient>[];
+  ///Help method
+  static List<VitalSignsObject>? _findMatchingObjectsVitalSigns(
+    VitalSigns? matchingVitalSigns,
+    List<VitalSignsObject> vitalSignsObjectResults,
+  ) {
+    if (matchingVitalSigns == null) {
+      return null;
+    }
+    List<VitalSignsObject> matchingObjects = <VitalSignsObject>[];
+
+    if (vitalSignsObjectResults.any(
+          (VitalSignsObject obj) =>
+              obj.objectId == matchingVitalSigns.valueObjectId1,
+        ) &&
+        vitalSignsObjectResults.any(
+          (VitalSignsObject obj) =>
+              obj.objectId == matchingVitalSigns.valueObjectId2,
+        )) {
+      matchingObjects.add(
+        vitalSignsObjectResults.firstWhere(
+          (VitalSignsObject obj) =>
+              obj.objectId == matchingVitalSigns.valueObjectId1,
+        ),
+      );
+      matchingObjects.add(
+        vitalSignsObjectResults.firstWhere(
+          (VitalSignsObject obj) =>
+              obj.objectId == matchingVitalSigns.valueObjectId2,
+        ),
+      );
+    }
+
+    return matchingObjects;
+  }
+
+  static List<BloodGasAnalysisObject>? _findMatchingObjectsBloodGasAnalysis(
+    BloodGasAnalysis? matchingBloodGasAnalysis,
+    List<BloodGasAnalysisObject> bloodGasAnalysisObjectResults,
+  ) {
+    if (matchingBloodGasAnalysis == null) {
+      return null;
+    }
+
+    List<BloodGasAnalysisObject> matchingObjects = <BloodGasAnalysisObject>[];
+    if (bloodGasAnalysisObjectResults.any(
+          (BloodGasAnalysisObject obj) =>
+              obj.objectId == matchingBloodGasAnalysis.valueObjectId1,
+        ) &&
+        bloodGasAnalysisObjectResults.any(
+          (BloodGasAnalysisObject obj) =>
+              obj.objectId == matchingBloodGasAnalysis.valueObjectId2,
+        )) {
+      matchingObjects.add(
+        bloodGasAnalysisObjectResults.firstWhere(
+          (BloodGasAnalysisObject obj) =>
+              obj.objectId == matchingBloodGasAnalysis.valueObjectId1,
+        ),
+      );
+      matchingObjects.add(
+        bloodGasAnalysisObjectResults.firstWhere(
+          (BloodGasAnalysisObject obj) =>
+              obj.objectId == matchingBloodGasAnalysis.valueObjectId2,
+        ),
+      );
+    }
+
+    return matchingObjects;
+  }
+
+  static List<RespiratoryParametersObject>?
+      _findMatchingObjectsRespiratoryParameters(
+    RespiratoryParameters? matchingRespiratoryParameters,
+    List<RespiratoryParametersObject> respiratoryParametersObjectResults,
+  ) {
+    if (matchingRespiratoryParameters == null) {
+      return null;
+    }
+    List<RespiratoryParametersObject> matchingObjects =
+        <RespiratoryParametersObject>[];
+
+    if (respiratoryParametersObjectResults.any(
+          (RespiratoryParametersObject obj) =>
+              obj.objectId == matchingRespiratoryParameters.valueObjectId1,
+        ) &&
+        respiratoryParametersObjectResults.any(
+          (RespiratoryParametersObject obj) =>
+              obj.objectId == matchingRespiratoryParameters.valueObjectId2,
+        )) {
+      matchingObjects.add(
+        respiratoryParametersObjectResults.firstWhere(
+          (RespiratoryParametersObject obj) =>
+              obj.objectId == matchingRespiratoryParameters.valueObjectId1,
+        ),
+      );
+      matchingObjects.add(
+        respiratoryParametersObjectResults.firstWhere(
+          (RespiratoryParametersObject obj) =>
+              obj.objectId == matchingRespiratoryParameters.valueObjectId2,
+        ),
+      );
+    }
+
+    return matchingObjects;
+  }
+
+  /// Gets an object entry.
+  static Future<CatalogOfItemsElement?> getObject() async {
+    try {
+      String? patientObjectId = EditPatientScreen.patientObjectId;
+
       List<ICUDiagnosis> icuDiagnosisResults = <ICUDiagnosis>[];
       List<VitalSigns> vitalSignsResults = <VitalSigns>[];
+      List<VitalSignsObject> vitalSignsObjectResults = <VitalSignsObject>[];
       List<RespiratoryParameters> respiratoryParametersResults =
           <RespiratoryParameters>[];
+      List<RespiratoryParametersObject> respiratoryParametersObjectResults =
+          <RespiratoryParametersObject>[];
       List<BloodGasAnalysis> bloodGasAnalysisResults = <BloodGasAnalysis>[];
+      List<BloodGasAnalysisObject> bloodGasAnalysisObjectResults =
+          <BloodGasAnalysisObject>[];
       List<LaborParameters> laborParametersResults = <LaborParameters>[];
-      List<Medicaments> medicamentsResults = <Medicaments>[];
       List<PatientData> movementDataResults = <PatientData>[];
 
-      for (dynamic element in responsePatient) {
-        patientResults.add(
-          Patient(
-            firstName: element['Firstname'] ?? '',
-            familyName: element['Lastname'] ?? '',
-            email: element['username'] ?? '',
-            number: element['PhoneNo'] ?? '',
-            address: element['Address'] ?? '',
-            formOfAddress: element['Form'] ?? '',
-            objectId: element['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (dynamic element in responseICUDiagnosis) {
-        icuDiagnosisResults.add(
-          ICUDiagnosis(
-            mainDiagnosis: element['ICU_Hd'] ?? '',
-            progressDiagnosis: element['ICU_Vd'] ?? '',
-            coMorbidity: element['CO_Morb'] ?? '',
-            intensiveCareUnitAcquiredWeakness: element['ICU_AW'] ?? '',
-            postIntensiveCareSyndrome: element['PICS'] ?? '',
-            objectId: element['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (dynamic element in responseVitalSigns) {
-        vitalSignsResults.add(
-          VitalSigns(
-            value1: element['VitalSignsObject']['objectId'],
-            value2: element['VitalSignsObject']['objectId'],
-            objectId: element['objectId'],
-            patientObjectId: element['Patient']['objectId'],
-            doctorObjectId: element['Doctor']['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (dynamic element in responseRespiratoryParameters) {
-        respiratoryParametersResults.add(
-          RespiratoryParameters(
-            value1: element['RespiratoryParametersObject']['objectId'],
-            value2: element['RespiratoryParametersObject']['objectId'],
-            patientObjectId: element['Patient']['objectId'],
-            doctorObjectId: element['Doctor']['objectId'],
-            objectId: element['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (dynamic element in responseBloodGasAnalysis) {
-        bloodGasAnalysisResults.add(
-          BloodGasAnalysis(
-            value1: element['BloodGasAnalysisObject']['objectId'],
-            value2: element['BloodGasAnalysisObject']['objectId'],
-            patientObjectId: element['Patient']['objectId'],
-            doctorObjectId: element['Doctor']['objectId'],
-            objectId: element['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (dynamic element in responseLaborParameters) {
-        laborParametersResults.add(
-          LaborParameters(
-            leukocyteCount: element['Leukozyten']['estimateNumber'].toDouble(),
-            lymphocyteCount:
-                element['lymphozyten_abs']['estimateNumber'].toDouble(),
-            lymphocytePercentage:
-                element['lymphozyten_proz']['estimateNumber'].toDouble(),
-            plateletCount: element['Thrombozyten']['estimateNumber'].toDouble(),
-            cReactiveProteinLevel: element['CRP']['estimateNumber'].toDouble(),
-            procalcitoninLevel: element['PCT']['estimateNumber'].toDouble(),
-            interleukin: element['IL_6']['estimateNumber'].toDouble(),
-            bloodUreaNitrogen: element['Urea']['estimateNumber'].toDouble(),
-            creatinine: element['Kreatinin']['estimateNumber'].toDouble(),
-            heartFailureMarker: element['BNP']['estimateNumber'].toDouble(),
-            heartFailureMarkerNTProBNP:
-                element['NT_Pro_BNP']['estimateNumber'].toDouble(),
-            bilirubinTotal: element['Bilirubin']['estimateNumber'].toDouble(),
-            hemoglobin: element['Haemoglobin']['estimateNumber'].toDouble(),
-            hematocrit: element['Haematokrit']['estimateNumber'].toDouble(),
-            albumin: element['Albumin']['estimateNumber'].toDouble(),
-            gotASAT: element['GOT']['estimateNumber'].toDouble(),
-            gptALAT: element['GPT']['estimateNumber'].toDouble(),
-            troponin: element['Troponin']['estimateNumber'].toDouble(),
-            creatineKinase: element['CK']['estimateNumber'].toDouble(),
-            myocardialInfarctionMarkerCKMB:
-                element['CK_MB']['estimateNumber'].toDouble(),
-            lactateDehydrogenaseLevel:
-                element['LDH']['estimateNumber'].toDouble(),
-            amylaseLevel: element['Amylase']['estimateNumber'].toDouble(),
-            lipaseLevel: element['Lipase']['estimateNumber'].toDouble(),
-            dDimer: element['D_Dimere']['estimateNumber'].toDouble(),
-            internationalNormalizedRatio:
-                element['INR']['estimateNumber'].toDouble(),
-            partialThromboplastinTime:
-                element['pTT']['estimateNumber'].toDouble(),
-            patientObjectId: element['Patient']['objectId'],
-            doctorObjectId: element['Doctor']['objectId'],
-            objectId: element['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (dynamic element in responseMedicaments) {
-        medicamentsResults.add(
-          Medicaments(
-            plateletAggregation: element['Thrombozytenaggregation'] ?? '',
-            noak: element['NOAK'] ?? '',
-            thrombosisProphylaxis: element['Thromboseprophylaxe'],
-            antihypertensives: element['Antihypertensiva'] ?? '',
-            antiarrhythmics: element['Antiarrythmika'] ?? '',
-            antidiabetics: element['Antidiabetika'] ?? '',
-            antiInfectives: element['Antiinfektiva'],
-            steroids: element['Steroide'] ?? '',
-            inhalatives: element['Inhalativa'] ?? '',
-            analgesics: element['Analgetika'] ?? '',
-            objectId: element['objectId'] ?? '',
-            patientObjectId: element['Patient']['objectId'],
-            doctorObjectId: element['Doctor']['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (dynamic element in responseMovementData) {
-        movementDataResults.add(
-          PatientData(
-            bodyHeight: element['BodyHeight']['estimateNumber'].toDouble(),
-            patientID: element['ID'],
-            caseNumber: element['CaseNumber'],
-            instKey: element['inst_key'],
-            bodyWeight: element['BodyWeight']['estimateNumber'].toDouble(),
-            ezpICU: DateTime.parse(element['EZP_ICU']),
-            age: element['Age'],
-            gender: element['Gender'] ?? '',
-            bmi: element['BMI']['estimateNumber'].toDouble(),
-            idealBMI: element['IdealBMI']['estimateNumber'].toDouble(),
-            dischargeReason: element['DischargeReason'] ?? '',
-            azpICU: DateTime.parse(element['AZP_ICU']),
-            ventilationDays: element['VentilationDays'],
-            azpKH: DateTime.parse(element['AZP_KH']),
-            ezpKH: DateTime.parse(element['EZP_ICU']),
-            icd10Codes: element['ICD_10_Codes'] ?? '',
-            station: element['Station'] ?? '',
-            lbgt70: element['LBgt70'],
-            icuMortality: element['ICU_Mortality']['estimateNumber'].toDouble(),
-            khMortality: element['KH_Mortality']['estimateNumber'].toDouble(),
-            icuLengthStay: element['ICU_LengthStay'],
-            khLengthStay: element['KH_LengthStay'],
-            wdaKH: element['WdaKH']['estimateNumber'].toDouble(),
-            weznDisease: element['WEznDisease']['estimateNumber'].toDouble(),
-            objectId: element['objectId'],
-            patientObjectId: element['Patient']['objectId'],
-            doctorObjectId: element['Doctor']['objectId'],
-            createdAt: DateTime.parse(element['createdAt']),
-            updatedAt: DateTime.parse(element['updatedAt']),
-          ),
-        );
-      }
-
-      for (Patient patientObject in patientResults) {
-        String? patientObjectId = patientObject.objectId;
-
-        ICUDiagnosis? matchingICUDiagnosis =
-            icuDiagnosisResults.firstWhereOrNull(
-          (ICUDiagnosis icuDiagnosisObject) =>
-              icuDiagnosisObject.patientObjectId == patientObjectId,
-        );
-
-        VitalSigns? matchingVitalSigns = vitalSignsResults.firstWhereOrNull(
-          (VitalSigns vitalSignsObject) =>
-              vitalSignsObject.patientObjectId == patientObjectId,
-        );
-
-        RespiratoryParameters? matchingRespiratoryParameters =
-            respiratoryParametersResults.firstWhereOrNull(
-          (RespiratoryParameters respiratoryParametersObject) =>
-              respiratoryParametersObject.patientObjectId == patientObjectId,
-        );
-
-        BloodGasAnalysis? matchingBloodGasAnalysis =
-            bloodGasAnalysisResults.firstWhereOrNull(
-          (BloodGasAnalysis bloodGasAnalysisObject) =>
-              bloodGasAnalysisObject.patientObjectId == patientObjectId,
-        );
-
-        LaborParameters? matchingLaborParameters =
-            laborParametersResults.firstWhereOrNull(
-          (LaborParameters laborParametersObject) =>
-              laborParametersObject.patientObjectId == patientObjectId,
-        );
-        Medicaments? matchingMedicaments = medicamentsResults.firstWhereOrNull(
-          (Medicaments medicamentsObject) =>
-              medicamentsObject.patientObjectId == patientObjectId,
-        );
-
-        PatientData? matchingMovementData =
-            movementDataResults.firstWhereOrNull(
-          (PatientData movementDataObject) =>
-              movementDataObject.patientObjectId == patientObjectId,
-        );
-
-        if (matchingICUDiagnosis != null &&
-            matchingVitalSigns != null &&
-            matchingRespiratoryParameters != null &&
-            matchingBloodGasAnalysis != null &&
-            matchingLaborParameters != null &&
-            matchingMedicaments != null &&
-            matchingMovementData != null) {
-          objectList.add(
-            CatalogOfItemsElement(
-              icuDiagnosis: matchingICUDiagnosis,
-              vitalSignsObject1: matchingVitalSigns.value1,
-              vitalSignsObject2: matchingVitalSigns.value2,
-              vitalSigns: matchingVitalSigns,
-              respiratoryParametersObject1:
-                  matchingRespiratoryParameters.value1,
-              respiratoryParametersObject2:
-                  matchingRespiratoryParameters.value2,
-              respiratoryParameters: matchingRespiratoryParameters,
-              bloodGasAnalysisObject1: matchingBloodGasAnalysis.value1,
-              bloodGasAnalysisObject2: matchingBloodGasAnalysis.value2,
-              bloodGasAnalysis: matchingBloodGasAnalysis,
-              laborParameters: matchingLaborParameters,
-              medicaments: matchingMedicaments,
-              movementData: matchingMovementData,
-              objectId: patientObject.objectId,
+      ParseResponse responseICUDiagnosis = await Backend.getEntry(
+        ICUDiagnosis.databaseTable,
+        'Patient',
+        EditPatientScreen.patientObjectId!,
+      );
+      if (responseICUDiagnosis.results != null) {
+        for (dynamic element in responseICUDiagnosis.results!) {
+          icuDiagnosisResults.add(
+            ICUDiagnosis(
+              mainDiagnosis: element['ICU_Hd'],
+              ancillaryDiagnosis: element['Nebendiagnose'],
+              intensiveCareUnitAcquiredWeakness: element['ICU_AW'],
+              postIntensiveCareSyndrome: element['PICS'],
+              patientObjectId: element['Patient']['objectId'],
+              doctorObjectId: element['Doctor']['objectId'],
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
             ),
           );
         }
       }
 
-      return getObjectsStream();
+      ParseResponse responseVitalSigns = await Backend.getEntry(
+        VitalSigns.databaseTable,
+        'Patient',
+        EditPatientScreen.patientObjectId!,
+      );
+
+      if (responseVitalSigns.results != null) {
+        ParseResponse responseVitalSignsObject1 = await Backend.getEntry(
+          VitalSignsObject.databaseTable,
+          'objectId',
+          responseVitalSigns.results![0]['value1']['objectId'],
+        );
+
+        ParseResponse responseVitalSignsObject2 = await Backend.getEntry(
+          VitalSignsObject.databaseTable,
+          'objectId',
+          responseVitalSigns.results![0]['value2']['objectId'],
+        );
+        for (dynamic element in responseVitalSigns.results!) {
+          vitalSignsResults.add(
+            VitalSigns(
+              valueObjectId1: element['value1']['objectId'],
+              valueObjectId2: element['value2']['objectId'],
+              objectId: element['objectId'],
+              patientObjectId: element['Patient']['objectId'],
+              doctorObjectId: element['Doctor']['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+        for (dynamic element in responseVitalSignsObject1.results!) {
+          vitalSignsObjectResults.add(
+            VitalSignsObject(
+              heartRate: element['HeartRate']?.toDouble(),
+              systolicArterialPressure: element['SAP']?.toDouble(),
+              meanArterialPressure: element['MAP']?.toDouble(),
+              diastolicArterialPressure: element['DAP']?.toDouble(),
+              centralVenousPressure: element['ZVD']?.toDouble(),
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+
+        for (dynamic element in responseVitalSignsObject2.results!) {
+          vitalSignsObjectResults.add(
+            VitalSignsObject(
+              heartRate: element['HeartRate']?.toDouble(),
+              systolicArterialPressure: element['SAP']?.toDouble(),
+              meanArterialPressure: element['MAP']?.toDouble(),
+              diastolicArterialPressure: element['DAP']?.toDouble(),
+              centralVenousPressure: element['ZVD']?.toDouble(),
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+      }
+
+      ParseResponse responseRespiratoryParameters = await Backend.getEntry(
+        RespiratoryParameters.databaseTable,
+        'Patient',
+        EditPatientScreen.patientObjectId!,
+      );
+
+      if (responseRespiratoryParameters.results != null) {
+        ParseResponse responseRespiratoryParametersObject1 =
+            await Backend.getEntry(
+          RespiratoryParametersObject.databaseTable,
+          'objectId',
+          responseRespiratoryParameters.results![0]['value1']['objectId'],
+        );
+        ParseResponse responseRespiratoryParametersObject2 =
+            await Backend.getEntry(
+          RespiratoryParametersObject.databaseTable,
+          'objectId',
+          responseRespiratoryParameters.results![0]['value2']['objectId'],
+        );
+
+        for (dynamic element in responseRespiratoryParameters.results!) {
+          respiratoryParametersResults.add(
+            RespiratoryParameters(
+              valueObjectId1: element['value1']['objectId'],
+              valueObjectId2: element['value2']['objectId'],
+              patientObjectId: element['Patient']['objectId'],
+              doctorObjectId: element['Doctor']['objectId'],
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+
+        for (dynamic element in responseRespiratoryParametersObject1.results!) {
+          respiratoryParametersObjectResults.add(
+            RespiratoryParametersObject(
+              tidalVolume: element['VT']?.toDouble(),
+              respiratoryRate: element['AF']?.toDouble(),
+              oxygenSaturation: element['SpO2']?.toDouble(),
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+
+        for (dynamic element in responseRespiratoryParametersObject2.results!) {
+          respiratoryParametersObjectResults.add(
+            RespiratoryParametersObject(
+              tidalVolume: element['VT']?.toDouble(),
+              respiratoryRate: element['AF']?.toDouble(),
+              oxygenSaturation: element['SpO2']?.toDouble(),
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+      }
+
+      ParseResponse responseBloodGasAnalysis = await Backend.getEntry(
+        BloodGasAnalysis.databaseTable,
+        'Patient',
+        EditPatientScreen.patientObjectId!,
+      );
+
+      if (responseBloodGasAnalysis.results != null) {
+        ParseResponse responseBloodGasAnalysisObject1 = await Backend.getEntry(
+          BloodGasAnalysisObject.databaseTable,
+          'objectId',
+          responseBloodGasAnalysis.results![0]['value1']['objectId'],
+        );
+
+        ParseResponse responseBloodGasAnalysisObject2 = await Backend.getEntry(
+          BloodGasAnalysisObject.databaseTable,
+          'objectId',
+          responseBloodGasAnalysis.results![0]['value2']['objectId'],
+        );
+
+        for (dynamic element in responseBloodGasAnalysis.results!) {
+          bloodGasAnalysisResults.add(
+            BloodGasAnalysis(
+              valueObjectId1: element['value1']['objectId'],
+              valueObjectId2: element['value2']['objectId'],
+              patientObjectId: element['Patient']['objectId'],
+              doctorObjectId: element['Doctor']['objectId'],
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+
+        for (dynamic element in responseBloodGasAnalysisObject1.results!) {
+          bloodGasAnalysisObjectResults.add(
+            BloodGasAnalysisObject(
+              arterialOxygenSaturation: element['SaO2']?.toDouble(),
+              centralVenousOxygenSaturation: element['SzVO2']?.toDouble(),
+              partialPressureOfOxygen: element['PaO2_woTemp']?.toDouble(),
+              partialPressureOfCarbonDioxide:
+                  element['PaCO2_woTemp']?.toDouble(),
+              arterialBaseExcess: element['BE']?.toDouble(),
+              arterialPH: element['pH']?.toDouble(),
+              arterialSerumBicarbonateConcentration:
+                  element['Bicarbonat']?.toDouble(),
+              arterialLactate: element['Laktat']?.toDouble(),
+              bloodGlucoseLevel: element['BloodSugar']?.toDouble(),
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+
+        for (dynamic element in responseBloodGasAnalysisObject2.results!) {
+          bloodGasAnalysisObjectResults.add(
+            BloodGasAnalysisObject(
+              arterialOxygenSaturation: element['SaO2']?.toDouble(),
+              centralVenousOxygenSaturation: element['SzVO2']?.toDouble(),
+              partialPressureOfOxygen: element['PaO2_woTemp']?.toDouble(),
+              partialPressureOfCarbonDioxide:
+                  element['PaCO2_woTemp']?.toDouble(),
+              arterialBaseExcess: element['BE']?.toDouble(),
+              arterialPH: element['pH']?.toDouble(),
+              arterialSerumBicarbonateConcentration:
+                  element['Bicarbonat']?.toDouble(),
+              arterialLactate: element['Laktat']?.toDouble(),
+              bloodGlucoseLevel: element['BloodSugar']?.toDouble(),
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+      }
+
+      ParseResponse responseLaborParameters = await Backend.getEntry(
+        LaborParameters.databaseTable,
+        'Patient',
+        EditPatientScreen.patientObjectId!,
+      );
+
+      ParseResponse responseMovementData = await Backend.getEntry(
+        PatientData.databaseTable,
+        'Patient',
+        EditPatientScreen.patientObjectId!,
+      );
+
+      if (responseLaborParameters.results != null) {
+        for (dynamic element in responseLaborParameters.results!) {
+          laborParametersResults.add(
+            LaborParameters(
+              leukocyteCount: element['Leukozyten']?.toDouble(),
+              lymphocyteCount: element['Lymphozyten_abs']?.toDouble(),
+              lymphocytePercentage: element['Lymphozyten_proz']?.toDouble(),
+              plateletCount: element['Thrombozyten']?.toDouble(),
+              cReactiveProteinLevel: element['CRP']?.toDouble(),
+              procalcitoninLevel: element['PCT']?.toDouble(),
+              interleukin: element['IL_6']?.toDouble(),
+              bloodUreaNitrogen: element['Urea']?.toDouble(),
+              creatinine: element['Kreatinin']?.toDouble(),
+              heartFailureMarker: element['BNP']?.toDouble(),
+              heartFailureMarkerNTProBNP: element['NT_Pro_BNP']?.toDouble(),
+              bilirubinTotal: element['Bilirubin']?.toDouble(),
+              hemoglobin: element['Haemoglobin']?.toDouble(),
+              hematocrit: element['Haematokrit']?.toDouble(),
+              albumin: element['Albumin']?.toDouble(),
+              gotASAT: element['GOT']?.toDouble(),
+              gptALAT: element['GPT']?.toDouble(),
+              troponin: element['Troponin']?.toDouble(),
+              creatineKinase: element['CK']?.toDouble(),
+              myocardialInfarctionMarkerCKMB: element['CK_MB']?.toDouble(),
+              lactateDehydrogenaseLevel: element['LDH']?.toDouble(),
+              amylaseLevel: element['Amylase']?.toDouble(),
+              lipaseLevel: element['Lipase']?.toDouble(),
+              dDimer: element['D_Dimere']?.toDouble(),
+              internationalNormalizedRatio: element['INR']?.toDouble(),
+              partialThromboplastinTime: element['pTT']?.toDouble(),
+              patientObjectId: element['Patient']['objectId'],
+              doctorObjectId: element['Doctor']['objectId'],
+              objectId: element['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+      }
+
+      if (responseMovementData.results != null) {
+        for (dynamic element in responseMovementData.results!) {
+          movementDataResults.add(
+            PatientData(
+              bodyHeight: element['BodyHeight']?.toDouble(),
+              patientID: element['ID'],
+              caseNumber: element['CaseNumber'],
+              instKey: element['inst_key'],
+              bodyWeight: element['BodyWeight']?.toDouble(),
+              ezpICU: element['EZP_ICU'],
+              birthDate: element['Birthdate'],
+              gender: element['Gender'],
+              bmi: element['BMI']?.toDouble(),
+              idealBMI: element['IdealBodyWeight']?.toDouble(),
+              azpICU: (element['AZP_ICU']),
+              ventilationDays: element['VentilationDays'],
+              azpKH: element['AZP_KH'],
+              ezpKH: element['EZP_KH'],
+              icd10Codes: element['ICD_10_Codes'],
+              station: element['Station'],
+              lbgt70: element['LBgt70'],
+              icuLengthStay: element['ICU_LengthStay'],
+              khLengthStay: element['KH_LengthStay'],
+              wdaICU: element['WdaICU2'],
+              objectId: element['objectId'],
+              patientObjectId: element['Patient']['objectId'],
+              doctorObjectId: element['Doctor']['objectId'],
+              createdAt: element['createdAt'],
+              updatedAt: element['updatedAt'],
+            ),
+          );
+        }
+      }
+
+      ICUDiagnosis? matchingICUDiagnosis = icuDiagnosisResults.firstWhereOrNull(
+        (ICUDiagnosis icuDiagnosisObject) =>
+            icuDiagnosisObject.patientObjectId == patientObjectId,
+      );
+
+      VitalSigns? matchingVitalSigns = vitalSignsResults.firstWhereOrNull(
+        (VitalSigns vitalSignsObject) =>
+            vitalSignsObject.patientObjectId == patientObjectId,
+      );
+
+      RespiratoryParameters? matchingRespiratoryParameters =
+          respiratoryParametersResults.firstWhereOrNull(
+        (RespiratoryParameters respiratoryParametersObject) =>
+            respiratoryParametersObject.patientObjectId == patientObjectId,
+      );
+
+      BloodGasAnalysis? matchingBloodGasAnalysis =
+          bloodGasAnalysisResults.firstWhereOrNull(
+        (BloodGasAnalysis bloodGasAnalysisObject) =>
+            bloodGasAnalysisObject.patientObjectId == patientObjectId,
+      );
+
+      LaborParameters? matchingLaborParameters =
+          laborParametersResults.firstWhereOrNull(
+        (LaborParameters laborParametersObject) =>
+            laborParametersObject.patientObjectId == patientObjectId,
+      );
+
+      PatientData? matchingMovementData = movementDataResults.firstWhereOrNull(
+        (PatientData movementDataObject) =>
+            movementDataObject.patientObjectId == patientObjectId,
+      );
+
+      CatalogOfItemsElement? result;
+      if (matchingICUDiagnosis != null ||
+          matchingVitalSigns != null ||
+          matchingRespiratoryParameters != null ||
+          matchingBloodGasAnalysis != null ||
+          matchingLaborParameters != null ||
+          matchingMovementData != null) {
+        List<VitalSignsObject>? foundObjectsVitalSigns =
+            _findMatchingObjectsVitalSigns(
+          matchingVitalSigns,
+          vitalSignsObjectResults,
+        );
+
+        List<BloodGasAnalysisObject>? foundObjectsBloodGasAnalysis =
+            _findMatchingObjectsBloodGasAnalysis(
+          matchingBloodGasAnalysis,
+          bloodGasAnalysisObjectResults,
+        );
+
+        List<RespiratoryParametersObject>? foundObjectsRespiratoryParameters =
+            _findMatchingObjectsRespiratoryParameters(
+          matchingRespiratoryParameters,
+          respiratoryParametersObjectResults,
+        );
+
+        result = CatalogOfItemsElement(
+          icuDiagnosis: matchingICUDiagnosis,
+          vitalSigns: matchingVitalSigns,
+          vitalSignsObject1: foundObjectsVitalSigns?[0],
+          vitalSignsObject2: foundObjectsVitalSigns?[1],
+          respiratoryParameters: matchingRespiratoryParameters,
+          respiratoryParametersObject1: foundObjectsRespiratoryParameters?[0],
+          respiratoryParametersObject2: foundObjectsRespiratoryParameters?[1],
+          bloodGasAnalysis: matchingBloodGasAnalysis,
+          bloodGasAnalysisObject1: foundObjectsBloodGasAnalysis?[0],
+          bloodGasAnalysisObject2: foundObjectsBloodGasAnalysis?[1],
+          laborParameters: matchingLaborParameters,
+          movementData: matchingMovementData,
+          objectId: patientObjectId,
+        );
+      }
+
+      return result;
     } catch (e) {
-      return Stream<List<CatalogOfItemsElement>>.error(e);
+      return null;
+    }
+  }
+
+  @override
+  Future<void> removeObject(AbstractDatabaseObject object) async {
+    try {
+      CatalogOfItemsElement? coi = object as CatalogOfItemsElement?;
+
+      if (coi?.icuDiagnosis != null) {
+        await Backend.removeObject(coi!.icuDiagnosis!);
+      }
+      if (coi?.vitalSignsObject1 != null) {
+        await Backend.removeObject(coi!.vitalSignsObject1!);
+      }
+      if (coi?.vitalSignsObject2 != null) {
+        await Backend.removeObject(coi!.vitalSignsObject2!);
+      }
+      if (coi?.vitalSigns != null) {
+        await Backend.removeObject(coi!.vitalSigns!);
+      }
+      if (coi?.bloodGasAnalysisObject1 != null) {
+        await Backend.removeObject(coi!.bloodGasAnalysisObject1!);
+      }
+      if (coi?.bloodGasAnalysisObject2 != null) {
+        await Backend.removeObject(coi!.bloodGasAnalysisObject2!);
+      }
+      if (coi?.bloodGasAnalysis != null) {
+        await Backend.removeObject(coi!.bloodGasAnalysis!);
+      }
+      if (coi?.respiratoryParametersObject1 != null) {
+        await Backend.removeObject(coi!.respiratoryParametersObject1!);
+      }
+      if (coi?.respiratoryParametersObject2 != null) {
+        await Backend.removeObject(coi!.respiratoryParametersObject2!);
+      }
+      if (coi?.respiratoryParameters != null) {
+        await Backend.removeObject(coi!.respiratoryParameters!);
+      }
+      if (coi?.laborParameters != null) {
+        await Backend.removeObject(coi!.laborParameters!);
+      }
+
+      dispatch();
+    } catch (e) {
+      return;
     }
   }
 }

@@ -15,23 +15,24 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:picos/widgets/picos_date_picker.dart';
-import 'package:picos/widgets/picos_form_of_address.dart';
+import 'package:picos/widgets/picos_label.dart';
 import 'package:picos/widgets/picos_number_field.dart';
 import 'package:picos/widgets/picos_switch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:picos/widgets/picos_text_area.dart';
-import 'package:picos/widgets/picos_text_field.dart';
 
 import '../catalog_of_items_page.dart';
 import '../widgets/catalog_of_items_label.dart';
 
 /// Shows the patients' movement data.
-class MovementData extends StatefulWidget {
+class MovementDataPage extends StatefulWidget {
   /// Creates MovementData.
-  const MovementData({
-    required this.ageCallback,
+  const MovementDataPage({
+    required this.birthDateCallback,
     required this.genderCallback,
     required this.bodyWeightCallback,
     required this.bodyHeightCallback,
@@ -39,7 +40,6 @@ class MovementData extends StatefulWidget {
     required this.idealBodyWeightCallback,
     required this.patientIDCallback,
     required this.caseNumberCallback,
-    required this.reasonForDischargeCallback,
     required this.admissionTimeICUCallback,
     required this.dischargeTimeICUCallback,
     required this.ventilationDaysICUCallback,
@@ -48,15 +48,11 @@ class MovementData extends StatefulWidget {
     required this.icd10COdesCallback,
     required this.patientLocationCallback,
     required this.lungProtectiveVentilationGt70pCallback,
-    required this.icuMortalityCallback,
-    required this.hospitalMortalityCallback,
     required this.hospitalLengthOfStayCallback,
     required this.icuLengthOfStayCallback,
     required this.readmissionRateICUCallback,
-    required this.hospitalReadmissionCallback,
-    required this.daysUntilWorkReuptakeCallback,
     Key? key,
-    this.initialAge,
+    this.initialBirthDate,
     this.initialGender,
     this.initialBodyWeight,
     this.initialBodyHeight,
@@ -64,7 +60,6 @@ class MovementData extends StatefulWidget {
     this.initialIdealBodyWeight,
     this.initialPatientID,
     this.initialCaseNumber,
-    this.initialReasonForDischarge,
     this.initialAdmissionTime,
     this.initialDischargeTime,
     this.initialVentilationDays,
@@ -72,20 +67,17 @@ class MovementData extends StatefulWidget {
     this.initialDischargeTimeFromTheHospital,
     this.initialICD10Codes,
     this.initialPatientLocation,
-    this.initialICUMortality,
-    this.initialHospitalMortality,
-    this.initialHospitaalLengthOfStay,
+    this.initialHospitalLengthOfStay,
     this.initialICULengthOfStay,
     this.initialReadmissionRateToTheICU,
-    this.initialHospitalReadmission,
-    this.initialDaysUntilWorkReuptake,
+    this.initialLungProtectiveVentilation70p,
   }) : super(key: key);
 
-  /// Main diagnosis callback.
-  final void Function(int? value) ageCallback;
+  /// Birthdate Callback.
+  final void Function(DateTime? value) birthDateCallback;
 
   /// Progress diagnosis callback.
-  final void Function(FormOfAddress? value) genderCallback;
+  final void Function(String? value) genderCallback;
 
   /// ICUAW callback.
   final void Function(double? value) bodyWeightCallback;
@@ -105,9 +97,6 @@ class MovementData extends StatefulWidget {
   /// Case Number callback.
   final void Function(String? value) caseNumberCallback;
 
-  /// Reason for Discharge callback.
-  final void Function(String? value) reasonForDischargeCallback;
-
   /// Admission Time for ICU callback.
   final void Function(DateTime? value) admissionTimeICUCallback;
 
@@ -124,19 +113,13 @@ class MovementData extends StatefulWidget {
   final void Function(DateTime? value) dischargeTimeHospitalCallback;
 
   /// ICD-10 Codes callback.
-  final void Function(String? value) icd10COdesCallback;
+  final void Function(List<dynamic>? value) icd10COdesCallback;
 
   /// Patient Location callback.
   final void Function(String? value) patientLocationCallback;
 
   /// Lung Protective Ventilation > 70 % callback.
   final void Function(bool? value) lungProtectiveVentilationGt70pCallback;
-
-  /// ICU Mortality callback.
-  final void Function(double? value) icuMortalityCallback;
-
-  /// Hospital Mortality callback.
-  final void Function(double? value) hospitalMortalityCallback;
 
   /// Hospital Length of Stay Callback.
   final void Function(int? value) hospitalLengthOfStayCallback;
@@ -145,19 +128,13 @@ class MovementData extends StatefulWidget {
   final void Function(int? value) icuLengthOfStayCallback;
 
   /// Readmission Rate of ICU callback.
-  final void Function(double? value) readmissionRateICUCallback;
-
-  /// Hospital Readmission callback.
-  final void Function(double? value) hospitalReadmissionCallback;
-
-  /// Days until Work Reuptake callback.
-  final void Function(int? value) daysUntilWorkReuptakeCallback;
+  final void Function(bool? value) readmissionRateICUCallback;
 
   /// Starting value for Age.
-  final int? initialAge;
+  final DateTime? initialBirthDate;
 
   /// Starting value for Gender.
-  final FormOfAddress? initialGender;
+  final String? initialGender;
 
   /// Starting value for Body Weight.
   final double? initialBodyWeight;
@@ -177,9 +154,6 @@ class MovementData extends StatefulWidget {
   /// Starting value for Case Number.
   final String? initialCaseNumber;
 
-  /// Starting value for Reason for Discharge.
-  final String? initialReasonForDischarge;
-
   /// Starting value for Admission Time.
   final DateTime? initialAdmissionTime;
 
@@ -187,7 +161,7 @@ class MovementData extends StatefulWidget {
   final DateTime? initialDischargeTime;
 
   /// Starting value for Ventilation Days.
-  final double? initialVentilationDays;
+  final int? initialVentilationDays;
 
   /// Starting value for Admission Time to the Hospital.
   final DateTime? initialAdmissionTimeToTheHospital;
@@ -196,48 +170,68 @@ class MovementData extends StatefulWidget {
   final DateTime? initialDischargeTimeFromTheHospital;
 
   /// Starting value for ICD-10 Codes.
-  final String? initialICD10Codes;
+  final List<dynamic>? initialICD10Codes;
 
   /// Starting value for Patient Location.
   final String? initialPatientLocation;
 
-  /// Starting value for ICU Mortality.
-  final double? initialICUMortality;
-
-  /// Starting value for Hospital Mortality.
-  final double? initialHospitalMortality;
-
   /// Starting value for Hospital Length of Stay.
-  final double? initialHospitaalLengthOfStay;
+  final int? initialHospitalLengthOfStay;
 
   /// Starting value for ICU Length of Stay.
-  final double? initialICULengthOfStay;
+  final int? initialICULengthOfStay;
 
   /// Starting value for Readmission Rate to the ICU.
-  final double? initialReadmissionRateToTheICU;
+  final bool? initialReadmissionRateToTheICU;
 
-  /// Starting value for Hospital Readmission.
-  final int? initialHospitalReadmission;
-
-  /// Starting value for Days until Work Reuptake.
-  final double? initialDaysUntilWorkReuptake;
+  /// Starting value for Lung Protective Ventilation.
+  final bool? initialLungProtectiveVentilation70p;
 
   @override
-  State<MovementData> createState() => _MovementDataState();
+  State<MovementDataPage> createState() => _MovementDataPageState();
 }
 
-class _MovementDataState extends State<MovementData> {
-  final bool lungProtectiveVentilation70p = false;
+class _MovementDataPageState extends State<MovementDataPage> {
+  DateTime? _selectedBirthDate;
+  DateTime? _selectedAdmissionTime;
+  DateTime? _selectedDischargeTime;
+  DateTime? _selectedAdmissionTimeToTheHospital;
+  DateTime? _selectedDischargeTimeFromTheHospital;
+
+  double bmi = 0;
+  int bodyHeight = 0;
+  double bodyWeight = 0;
+  
+  @override
+  void initState() {
+    super.initState();
+    _selectedBirthDate = widget.initialBirthDate;
+    _selectedAdmissionTime = widget.initialAdmissionTime;
+    _selectedDischargeTime = widget.initialDischargeTime;
+    _selectedAdmissionTimeToTheHospital =
+        widget.initialAdmissionTimeToTheHospital;
+    _selectedDischargeTimeFromTheHospital =
+        widget.initialDischargeTimeFromTheHospital;
+
+    bodyHeight = widget.initialBodyHeight!.toInt();
+    bodyWeight = widget.initialBodyWeight ?? 0;
+
+    if (bodyWeight != 0 && bodyHeight != 0) {
+      bmi = _calculateBmi(bodyHeight, bodyWeight);
+    } else {
+      bmi = 0;
+    }
+  }
+
+  double _calculateBmi(int height, double bodyWeight) {
+    return (bodyWeight / pow(height / 100, 2));
+  }
 
   @override
   Widget build(BuildContext context) {
-    const int textAreaLines = 3;
-
     const String cm = 'cm';
-    const String kgm2 = 'kg/m2';
+    const int textAreaLines = 3;
     const String kg = 'kg';
-    const String percent = '%';
-    String nYear = 'n/${AppLocalizations.of(context)!.year}';
 
     return CatalogOfItemsPage(
       title: AppLocalizations.of(context)!.patientsMovementData,
@@ -245,20 +239,24 @@ class _MovementDataState extends State<MovementData> {
         Column(
           children: <Widget>[
             CatalogOfItemsLabel(
-              AppLocalizations.of(context)!.age,
+              AppLocalizations.of(context)!.birthDate,
             ),
-            PicosNumberField(
-              hint: AppLocalizations.of(context)!.years,
-              digitsOnly: true,
-              onChanged: (String value) {
-                widget.ageCallback(int.tryParse(value));
+            PicosDatePicker(
+              callBackFunction: (DateTime value) {
+                widget.birthDateCallback(value);
+                setState(() {
+                  _selectedBirthDate = value;
+                });
               },
+              initialValue: _selectedBirthDate,
             ),
             CatalogOfItemsLabel(
               AppLocalizations.of(context)!.gender,
             ),
-            PicosFormOfAddress(
-              callBackFunction: (FormOfAddress value) {
+            PicosTextArea(
+              maxLines: textAreaLines,
+              initialValue: widget.initialGender?.toString(),
+              onChanged: (String value) {
                 widget.genderCallback(value);
               },
             ),
@@ -267,37 +265,44 @@ class _MovementDataState extends State<MovementData> {
             ),
             PicosNumberField(
               hint: kg,
+              initialValue: widget.initialBodyWeight?.toString(),
               onChanged: (String value) {
                 widget.bodyWeightCallback(double.tryParse(value));
+
+                setState(() {
+                  bodyWeight = double.tryParse(value) ?? 0;
+
+                  if (bodyWeight != 0 && bodyHeight != 0) {
+                    bmi = _calculateBmi(bodyHeight, bodyWeight);
+                  } else {
+                    bmi = 0;
+                  }
+                });
               },
             ),
             CatalogOfItemsLabel(AppLocalizations.of(context)!.height),
             PicosNumberField(
               hint: cm,
+              initialValue: widget.initialBodyHeight?.toString(),
               digitsOnly: true,
               onChanged: (String value) {
                 widget.bodyHeightCallback(double.tryParse(value));
-              },
-            ),
-            CatalogOfItemsLabel(AppLocalizations.of(context)!.bmi),
-            PicosNumberField(
-              hint: kgm2,
-              onChanged: (String value) {
-                widget.bodyMassIndexCallback(double.tryParse(value));
-              },
-            ),
-            CatalogOfItemsLabel(
-              AppLocalizations.of(context)!.idealBodyWeight,
-            ),
-            PicosNumberField(
-              hint: kg,
-              onChanged: (String value) {
-                widget.idealBodyWeightCallback(double.tryParse(value));
+
+                setState(() {
+                  bodyHeight = int.tryParse(value) ?? 0;
+
+                  if (bodyWeight != 0 && bodyHeight != 0) {
+                    bmi = _calculateBmi(bodyHeight, bodyWeight);
+                  } else {
+                    bmi = 0;
+                  }
+                });
               },
             ),
             CatalogOfItemsLabel(AppLocalizations.of(context)!.patientID),
             PicosTextArea(
               maxLines: textAreaLines,
+              initialValue: widget.initialPatientID,
               onChanged: (String value) {
                 widget.patientIDCallback(value);
               },
@@ -305,17 +310,21 @@ class _MovementDataState extends State<MovementData> {
             CatalogOfItemsLabel(AppLocalizations.of(context)!.caseNumber),
             PicosTextArea(
               maxLines: textAreaLines,
+              initialValue: widget.initialCaseNumber,
               onChanged: (String value) {
                 widget.caseNumberCallback(value);
               },
             ),
+            CatalogOfItemsLabel(AppLocalizations.of(context)!.bmi),
+            PicosLabel(bmi.toString()),
             CatalogOfItemsLabel(
-              AppLocalizations.of(context)!.reasonForDischarge,
+              AppLocalizations.of(context)!.idealBodyWeight,
             ),
-            PicosTextArea(
-              maxLines: textAreaLines,
+            PicosNumberField(
+              hint: kg,
+              initialValue: widget.initialIdealBodyWeight?.toString(),
               onChanged: (String value) {
-                widget.reasonForDischargeCallback(value);
+                widget.idealBodyWeightCallback(double.tryParse(value));
               },
             ),
             CatalogOfItemsLabel(
@@ -324,7 +333,11 @@ class _MovementDataState extends State<MovementData> {
             PicosDatePicker(
               callBackFunction: (DateTime value) {
                 widget.admissionTimeICUCallback(value);
+                setState(() {
+                  _selectedAdmissionTime = value;
+                });
               },
+              initialValue: _selectedAdmissionTime,
             ),
             CatalogOfItemsLabel(
               AppLocalizations.of(context)!.dischargeTimeICU,
@@ -332,7 +345,11 @@ class _MovementDataState extends State<MovementData> {
             PicosDatePicker(
               callBackFunction: (DateTime value) {
                 widget.dischargeTimeICUCallback(value);
+                setState(() {
+                  _selectedDischargeTime = value;
+                });
               },
+              initialValue: _selectedDischargeTime,
             ),
             CatalogOfItemsLabel(
               AppLocalizations.of(context)!.ventilationDaysICU,
@@ -342,24 +359,40 @@ class _MovementDataState extends State<MovementData> {
               onChanged: (String value) {
                 widget.ventilationDaysICUCallback(int.tryParse(value));
               },
+              initialValue: widget.initialVentilationDays?.toString(),
             ),
             CatalogOfItemsLabel(
               AppLocalizations.of(context)!.admissionTimeHospital,
             ),
             PicosDatePicker(
-              callBackFunction: (DateTime value) {},
+              callBackFunction: (DateTime value) {
+                widget.admissionTimeHospitalCallback(value);
+                setState(() {
+                  _selectedAdmissionTimeToTheHospital = value;
+                });
+              },
+              initialValue: _selectedAdmissionTimeToTheHospital,
             ),
             CatalogOfItemsLabel(
               AppLocalizations.of(context)!.dischargeTimeHospital,
             ),
             PicosDatePicker(
-              callBackFunction: (DateTime value) {},
+              callBackFunction: (DateTime value) {
+                widget.dischargeTimeHospitalCallback(value);
+                setState(() {
+                  _selectedDischargeTimeFromTheHospital = value;
+                });
+              },
+              initialValue: _selectedDischargeTimeFromTheHospital,
             ),
             CatalogOfItemsLabel(AppLocalizations.of(context)!.icd10Codes),
-            PicosTextField(
+            PicosTextArea(
               hint: 'ICD-10 Codes',
+              initialValue: widget.initialICD10Codes?[0].toString(),
               onChanged: (String value) {
-                widget.icd10COdesCallback(value);
+                List<dynamic> list = <dynamic>[];
+                list.add(value);
+                widget.icd10COdesCallback(list);
               },
             ),
             CatalogOfItemsLabel(
@@ -367,6 +400,7 @@ class _MovementDataState extends State<MovementData> {
             ),
             PicosTextArea(
               maxLines: textAreaLines,
+              initialValue: widget.initialPatientLocation,
               onChanged: (String value) {
                 widget.patientLocationCallback(value);
               },
@@ -376,24 +410,15 @@ class _MovementDataState extends State<MovementData> {
         Row(
           children: <Expanded>[
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15),
-                child: CatalogOfItemsLabel(
-                  AppLocalizations.of(context)!.lungProtectiveVentilation70p,
-                ),
+              child: CatalogOfItemsLabel(
+                AppLocalizations.of(context)!.lungProtectiveVentilation70p,
               ),
             ),
             Expanded(
               child: PicosSwitch(
-                initialValue: lungProtectiveVentilation70p,
-                onChanged: (bool value) {
-                  setState(
-                    () {
-                      widget.lungProtectiveVentilationGt70pCallback(
-                        value,
-                      );
-                    },
-                  );
+                initialValue: widget.initialLungProtectiveVentilation70p,
+                onChanged: (bool? value) {
+                  widget.lungProtectiveVentilationGt70pCallback(value);
                 },
               ),
             ),
@@ -401,27 +426,12 @@ class _MovementDataState extends State<MovementData> {
         ),
         Column(
           children: <Widget>[
-            CatalogOfItemsLabel(AppLocalizations.of(context)!.icuMortality),
-            PicosNumberField(
-              hint: percent,
-              onChanged: (String value) {
-                widget.icuMortalityCallback(double.tryParse(value));
-              },
-            ),
-            CatalogOfItemsLabel(
-              AppLocalizations.of(context)!.hospitalMortality,
-            ),
-            PicosNumberField(
-              hint: percent,
-              onChanged: (String value) {
-                widget.hospitalMortalityCallback(double.tryParse(value));
-              },
-            ),
             CatalogOfItemsLabel(
               AppLocalizations.of(context)!.hospitalLengthOfStay,
             ),
             PicosNumberField(
               hint: AppLocalizations.of(context)!.days,
+              initialValue: widget.initialHospitalLengthOfStay?.toString(),
               onChanged: (String value) {
                 widget.hospitalLengthOfStayCallback(int.tryParse(value));
               },
@@ -431,36 +441,17 @@ class _MovementDataState extends State<MovementData> {
             ),
             PicosNumberField(
               hint: AppLocalizations.of(context)!.days,
+              initialValue: widget.initialICULengthOfStay?.toString(),
               onChanged: (String value) {
                 widget.icuLengthOfStayCallback(int.tryParse(value));
               },
             ),
-            CatalogOfItemsLabel(
-              AppLocalizations.of(context)!.readmissionRateICU,
-            ),
-            PicosNumberField(
-              hint: percent,
-              onChanged: (String value) {
-                widget.readmissionRateICUCallback(double.tryParse(value));
+            PicosSwitch(
+              initialValue: widget.initialReadmissionRateToTheICU,
+              onChanged: (bool? value) {
+                widget.readmissionRateICUCallback(value);
               },
-            ),
-            CatalogOfItemsLabel(
-              AppLocalizations.of(context)!.hospitalReadmission,
-            ),
-            PicosNumberField(
-              hint: nYear,
-              onChanged: (String value) {
-                widget.readmissionRateICUCallback(double.tryParse(value));
-              },
-            ),
-            CatalogOfItemsLabel(
-              AppLocalizations.of(context)!.daysUntilWorkReuptake,
-            ),
-            PicosNumberField(
-              hint: AppLocalizations.of(context)!.days,
-              onChanged: (String value) {
-                widget.daysUntilWorkReuptakeCallback(int.tryParse(value));
-              },
+              title: AppLocalizations.of(context)!.readmissionRateICU,
             ),
           ],
         ),

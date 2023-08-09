@@ -23,9 +23,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/catalog_of_items_label.dart';
 
 /// Shows the Respiration Parameters page for the [CatalogOfItemsScreen].
-class RespirationParameters extends StatelessWidget {
+class RespirationParametersPage extends StatelessWidget {
   /// Respiration Parameters constructor.
-  const RespirationParameters({
+  const RespirationParametersPage({
     required this.tidalVolumenCallback,
     required this.respiratoryRate1Callback,
     required this.respiratoryRate2Callback,
@@ -40,19 +40,19 @@ class RespirationParameters extends StatelessWidget {
   }) : super(key: key);
 
   /// Tidal Volume (ml) Callback.
-  final void Function(double?) tidalVolumenCallback;
+  final void Function(double? value) tidalVolumenCallback;
 
   /// Respiratory Rate 1 (/min) Callback.
-  final void Function(double?) respiratoryRate1Callback;
+  final void Function(double? value) respiratoryRate1Callback;
 
   /// Respiratory Rate 2 (/min) Callback.
-  final void Function(double?) respiratoryRate2Callback;
+  final void Function(double? value) respiratoryRate2Callback;
 
   /// Oxygen Saturation 1 (%) Callback.
-  final void Function(double?) oxygenSaturation1Callback;
+  final void Function(double? value) oxygenSaturation1Callback;
 
   /// Oxygen Saturation 2 (%) Callback.
-  final void Function(double?) oxygenSaturation2Callback;
+  final void Function(double? value) oxygenSaturation2Callback;
 
   /// Starting value for tidal volume.
   final double? initialTidalVolume;
@@ -84,6 +84,7 @@ class RespirationParameters extends StatelessWidget {
             ),
             PicosNumberField(
               hint: 'mL',
+              initialValue: initialTidalVolume?.toString(),
               onChanged: (String value) {
                 tidalVolumenCallback(
                   double.tryParse(value),
@@ -114,6 +115,7 @@ class RespirationParameters extends StatelessWidget {
                       ),
                       PicosNumberField(
                         hint: percent,
+                        initialValue: initialOxygenSaturation1?.toString(),
                         onChanged: (String value) {
                           oxygenSaturation1Callback(
                             double.tryParse(value),
@@ -131,6 +133,7 @@ class RespirationParameters extends StatelessWidget {
                       ),
                       PicosNumberField(
                         hint: percent,
+                        initialValue: initialOxygenSaturation2?.toString(),
                         onChanged: (String value) {
                           oxygenSaturation2Callback(
                             double.tryParse(value),
@@ -150,6 +153,7 @@ class RespirationParameters extends StatelessWidget {
                       CatalogOfItemsLabel(AppLocalizations.of(context)!.af),
                       PicosNumberField(
                         hint: min,
+                        initialValue: initialRespiratoryRate1?.toString(),
                         onChanged: (String value) {
                           respiratoryRate1Callback(
                             double.tryParse(value),
@@ -165,6 +169,7 @@ class RespirationParameters extends StatelessWidget {
                       CatalogOfItemsLabel(AppLocalizations.of(context)!.af),
                       PicosNumberField(
                         hint: min,
+                        initialValue: initialRespiratoryRate2?.toString(),
                         onChanged: (String value) {
                           respiratoryRate2Callback(
                             double.tryParse(value),

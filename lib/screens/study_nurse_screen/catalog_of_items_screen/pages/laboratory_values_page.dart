@@ -23,9 +23,9 @@ import '../catalog_of_items_page.dart';
 import '../widgets/catalog_of_items_label.dart';
 
 /// Shows the vital data page.
-class LaboratoryValues extends StatelessWidget {
+class LaboratoryValuesPage extends StatelessWidget {
   /// Creates VitalData.
-  const LaboratoryValues({
+  const LaboratoryValuesPage({
     required this.leukocyteCountCallback,
     required this.lymphocyteCountCallback,
     required this.lymphocytePercentageCallback,
@@ -445,7 +445,7 @@ class LaboratoryValues extends StatelessWidget {
               hint: ul,
               initialValue: initialAmylaseLevel?.toString(),
               onChanged: (String value) {
-                hematocritCallback(double.tryParse(value));
+                amylaseLevelCallback(double.tryParse(value));
               },
             ),
             CatalogOfItemsLabel(AppLocalizations.of(context)!.lipaseLevel),

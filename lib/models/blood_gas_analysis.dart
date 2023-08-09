@@ -21,11 +21,13 @@ import 'package:picos/models/blood_gas_analysis_object.dart';
 /// Class with Blood Gas Analysis information.
 class BloodGasAnalysis extends AbstractDatabaseObject {
   /// Creates a Blood Gas Analysis object.
-  const BloodGasAnalysis({
+  BloodGasAnalysis({
     required this.doctorObjectId,
-    required this.value1,
-    required this.value2,
     required this.patientObjectId,
+    this.value1,
+    this.value2,
+    this.valueObjectId1,
+    this.valueObjectId2,
     String? objectId,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -38,13 +40,19 @@ class BloodGasAnalysis extends AbstractDatabaseObject {
   final String doctorObjectId;
 
   /// Last value.
-  final BloodGasAnalysisObject value1;
+  late BloodGasAnalysisObject? value1;
 
   /// Pre-last value.
-  final BloodGasAnalysisObject value2;
+  late BloodGasAnalysisObject? value2;
 
   /// Patient Object Id.
   final String patientObjectId;
+
+  /// Value of first Object ID.
+  final String? valueObjectId1;
+
+  /// Value of second Object ID.
+  final String? valueObjectId2;
 
   @override
   get table {
@@ -57,6 +65,8 @@ class BloodGasAnalysis extends AbstractDatabaseObject {
     BloodGasAnalysisObject? value1,
     BloodGasAnalysisObject? value2,
     String? patientObjectId,
+    String? valueObjectId1,
+    String? valueObjectId2,
     String? objectId,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -66,6 +76,8 @@ class BloodGasAnalysis extends AbstractDatabaseObject {
       value1: value1 ?? this.value1,
       value2: value2 ?? this.value2,
       patientObjectId: patientObjectId ?? this.patientObjectId,
+      valueObjectId1: valueObjectId1 ?? this.valueObjectId1,
+      valueObjectId2: valueObjectId2 ?? this.valueObjectId2,
       objectId: objectId ?? this.objectId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -74,31 +86,39 @@ class BloodGasAnalysis extends AbstractDatabaseObject {
 
   @override
   List<Object> get props => <Object>[
-        value1,
-        value2,
+        doctorObjectId,
+        patientObjectId,
       ];
 
   @override
-  Map<String, dynamic> get databaseMapping => <String, dynamic>{
-        'Doctor': <String, String>{
-          'objectId': doctorObjectId,
-          '__type': 'Pointer',
-          'className': '_User'
-        },
-        'value1': <String, String>{
-          'objectId': value1.objectId!,
-          '__type': 'Pointer',
-          'className': 'BloodGasAnalysis_obj'
-        },
-        'value2': <String, String>{
-          'objectId': value2.objectId!,
-          '__type': 'Pointer',
-          'className': 'BloodGasAnalysis_obj'
-        },
-        'Patient': <String, String>{
-          'objectId': patientObjectId,
-          '__type': 'Pointer',
-          'className': '_User'
-        },
+  Map<String, dynamic> get databaseMapping {
+    final Map<String, dynamic> map = <String, dynamic>{
+      'Patient': <String, String>{
+        'objectId': patientObjectId,
+        '__type': 'Pointer',
+        'className': '_User'
+      },
+      'Doctor': <String, String>{
+        'objectId': doctorObjectId,
+        '__type': 'Pointer',
+        'className': '_User'
+      },
+    };
+
+    if (value1 != null && value1?.objectId != null) {
+      map['value1'] = <String, dynamic>{
+        'objectId': value1?.objectId,
+        '__type': 'Pointer',
+        'className': 'BloodGasAnalysis_obj'
       };
+    }
+    if (value2 != null && value2?.objectId != null) {
+      map['value2'] = <String, dynamic>{
+        'objectId': value2?.objectId,
+        '__type': 'Pointer',
+        'className': 'BloodGasAnalysis_obj'
+      };
+    }
+    return map;
+  }
 }
