@@ -192,6 +192,10 @@ class _QuestionaireScreenState extends State<QuestionaireScreen> {
       SystemUiOverlayStyle.light.copyWith(
         statusBarColor: color,
         statusBarIconBrightness: iconBrightness,
+        systemNavigationBarColor:
+            Theme.of(context).bottomNavigationBarTheme.backgroundColor ??
+                Theme.of(context).canvasColor,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
   }
