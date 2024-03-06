@@ -66,7 +66,7 @@ class _OverviewState extends State<Overview> {
       statusBarColorValue = theme.darkGreen1;
       statusBarIconBrightnessValue = Brightness.light;
     } else {
-      statusBarColorValue = theme.white;
+      statusBarColorValue = const Color(0xFFfdfbfe);
       statusBarIconBrightnessValue = Brightness.dark;
     }
     SystemChrome.setSystemUIOverlayStyle(

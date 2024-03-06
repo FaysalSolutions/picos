@@ -64,6 +64,8 @@ class PicosScreenFrame extends StatelessWidget {
                 systemOverlayStyle: SystemUiOverlayStyle(
                   statusBarColor: theme.darkGreen1,
                   statusBarIconBrightness: Brightness.light,
+                  systemNavigationBarColor: const Color(0xFFfdfbfe),
+                  systemNavigationBarIconBrightness: Brightness.dark,
                 ),
                 iconTheme: IconThemeData(
                   color: theme.white,

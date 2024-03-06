@@ -193,8 +193,7 @@ class _QuestionaireScreenState extends State<QuestionaireScreen> {
         statusBarColor: color,
         statusBarIconBrightness: iconBrightness,
         systemNavigationBarColor:
-            Theme.of(context).bottomNavigationBarTheme.backgroundColor ??
-                Theme.of(context).canvasColor,
+        const Color(0xFFfdfbfe),
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -206,7 +205,7 @@ class _QuestionaireScreenState extends State<QuestionaireScreen> {
     if (Overview.isScrolled) {
       _setStatusBarColor(const Color(0xFF197888), Brightness.light);
     } else {
-      _setStatusBarColor(Colors.white, Brightness.dark);
+      _setStatusBarColor(const Color(0xFFfdfbfe), Brightness.dark);
     }
   }
 
