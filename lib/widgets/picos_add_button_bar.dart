@@ -28,6 +28,7 @@ class PicosAddButtonBar extends StatelessWidget {
     this.disabled = false,
     this.leftButton,
     this.rightButton,
+    this.color,
     this.shadows = true,
     Key? key,
   }) : super(key: key);
@@ -44,6 +45,9 @@ class PicosAddButtonBar extends StatelessWidget {
   /// For custom button replacement of the right button.
   final PicosInkWellButton? rightButton;
 
+  /// The Color of the background of App-Button-Bar.
+  final Color? color;
+
   /// Determines if the elevation shadows should be casted or not.
   final bool shadows;
 
@@ -52,6 +56,7 @@ class PicosAddButtonBar extends StatelessWidget {
     final GlobalTheme theme = Theme.of(context).extension<GlobalTheme>()!;
 
     return Container(
+      color: color,
       decoration: shadows == true
           ? BoxDecoration(
               color: Theme.of(context).canvasColor,

@@ -27,6 +27,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
     this.darkGreen1 = const Color(0xFF197888),
     this.darkGreen2 = const Color(0xFF4a8a96),
     this.darkGreen3 = const Color(0xFF0f5868),
+    this.skyBlueLight = const Color(0xFFe8f1f3),
     this.white = const Color(0xFFffffff),
     this.blue = const Color(0xFF236fa8),
     this.green1 = const Color(0xFF95c11f),
@@ -46,6 +47,9 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
 
   /// Standard: #0f5868
   final Color? darkGreen3;
+
+  /// Standard: #e8f1f3
+  final Color? skyBlueLight;
 
   /// Standard: #e8f1f3
   final Color? white;
@@ -80,6 +84,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
     Color? darkGreen1,
     Color? darkGreen2,
     Color? darkGreen3,
+    Color? skyBlueLight,
     Color? white,
     Color? blue,
     Color? green1,
@@ -94,6 +99,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
       darkGreen1: darkGreen1 ?? this.darkGreen1,
       darkGreen2: darkGreen2 ?? this.darkGreen2,
       darkGreen3: darkGreen3 ?? this.darkGreen3,
+      skyBlueLight: skyBlueLight ?? this.skyBlueLight,
       white: white ?? this.white,
       blue: blue ?? this.blue,
       green1: green1 ?? this.green1,
@@ -119,6 +125,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
       darkGreen1: Color.lerp(darkGreen1, other.darkGreen1, t),
       darkGreen2: Color.lerp(darkGreen2, other.darkGreen2, t),
       darkGreen3: Color.lerp(darkGreen3, other.darkGreen3, t),
+      skyBlueLight: Color.lerp(skyBlueLight, other.skyBlueLight, t),
       white: Color.lerp(white, other.white, t),
       blue: Color.lerp(blue, other.blue, t),
       green1: Color.lerp(green1, other.green1, t),

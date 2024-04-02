@@ -16,6 +16,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -30,7 +31,7 @@ class QuestionnairePage extends StatelessWidget {
   const QuestionnairePage({
     required this.child,
     Key? key,
-    this.color = Colors.white,
+    this.color,
     this.backFunction,
     this.nextFunction,
     this.textNext = '',
@@ -41,7 +42,7 @@ class QuestionnairePage extends StatelessWidget {
   final Widget child;
 
   /// The color of the column.
-  final Color color;
+  final Color? color;
 
   /// Function for getting a page back.
   final void Function()? backFunction;
@@ -66,13 +67,15 @@ class QuestionnairePage extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: Container(
-            color: color,
+            color: color ?? theme.skyBlueLight,
             child: PicosBody(
               child: child,
             ),
           ),
         ),
         PicosAddButtonBar(
+          color: color ?? theme.skyBlueLight,
+          shadows: false,
           leftButton: PicosInkWellButton(
             padding: const EdgeInsets.only(
               left: 30,
