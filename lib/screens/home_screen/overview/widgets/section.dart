@@ -5,7 +5,12 @@ import '../../../../themes/global_theme.dart';
 /// Creates a standardized section for the overview.
 class Section extends StatelessWidget {
   /// Section constructor.
-  const Section({required this.child, Key? key, this.title, this.titleColor})
+  const Section(
+      {required this.child,
+      Key? key,
+      this.title,
+      this.titleColor,
+      this.sectionBackground})
       : super(key: key);
 
   /// Title for the section.
@@ -17,10 +22,14 @@ class Section extends StatelessWidget {
   /// The color for the title.
   final Color? titleColor;
 
+  /// The color for background of the section.
+  final Color? sectionBackground;
+
   @override
   Widget build(BuildContext context) {
     final GlobalTheme theme = Theme.of(context).extension<GlobalTheme>()!;
-    return Padding(
+    return Container(
+      color: sectionBackground ?? theme.white,
       padding: const EdgeInsets.all(15),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
