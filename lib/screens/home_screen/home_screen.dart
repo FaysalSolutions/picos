@@ -77,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
       type: BottomNavigationBarType.fixed,
+      backgroundColor: theme.white,
       currentIndex: selectedIndex,
       onTap: onItemTapped,
       selectedItemColor: theme.darkGreen1,
