@@ -21,6 +21,7 @@ import 'package:picos/screens/home_screen/overview/widgets/graph_section.dart';
 import 'package:picos/screens/home_screen/overview/widgets/my_health_section.dart';
 import 'package:picos/screens/home_screen/overview/widgets/questionnaire_section.dart';
 import '../../../themes/global_theme.dart';
+import 'package:flutter/services.dart';
 
 /// Main widget using all subwidgets to build up the "overview"-screen
 class Overview extends StatelessWidget {
@@ -31,32 +32,41 @@ class Overview extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalTheme theme = Theme.of(context).extension<GlobalTheme>()!;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 45,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Image>[
-              Image.asset(
-                'assets/PICOS_Logo_RGB.png',
-                height: 75,
-              ),
-            ],
-          ),
-          const QuestionaireSection(),
-          Container(
-            color: theme.white,
-            child: const GraphSection(),
-          ),
-          Container(
-            color: theme.blue,
-            child: const MyHealthSection(),
-          ),
-          const ContactSection(),
-        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        // NavigationBar
+        systemNavigationBarIconBrightness: Brightness.dark, // Icons
+        // StatusBar
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            const SizedBox(
+              height: 45,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Image>[
+                Image.asset(
+                  'assets/PICOS_Logo_RGB.png',
+                  height: 75,
+                ),
+              ],
+            ),
+            const QuestionaireSection(),
+            Container(
+              color: theme.white,
+              child: const GraphSection(),
+            ),
+            Container(
+              color: theme.blue,
+              child: const MyHealthSection(),
+            ),
+            const ContactSection(),
+          ],
+        ),
       ),
     );
   }
