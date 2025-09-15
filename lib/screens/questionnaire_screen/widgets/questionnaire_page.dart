@@ -30,7 +30,7 @@ class QuestionnairePage extends StatelessWidget {
   const QuestionnairePage({
     required this.child,
     Key? key,
-    this.color = Colors.white,
+    this.color,
     this.backFunction,
     this.nextFunction,
     this.textNext = '',
@@ -41,7 +41,7 @@ class QuestionnairePage extends StatelessWidget {
   final Widget child;
 
   /// The color of the column.
-  final Color color;
+  final Color? color;
 
   /// Function for getting a page back.
   final void Function()? backFunction;
@@ -66,7 +66,7 @@ class QuestionnairePage extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: Container(
-            color: color,
+            color: color ?? theme.iceBlue,
             child: PicosBody(
               child: child,
             ),
