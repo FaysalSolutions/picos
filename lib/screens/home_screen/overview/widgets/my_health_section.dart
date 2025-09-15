@@ -21,6 +21,8 @@ import 'package:picos/gen_l10n/app_localizations.dart';
 import 'package:picos/screens/home_screen/overview/widgets/section.dart';
 import 'package:picos/screens/home_screen/overview/widgets/tile.dart';
 
+import '../../../../themes/global_theme.dart';
+
 /// Widget which displays health-related information
 class MyHealthSection extends StatelessWidget {
   /// MyHealthSection constructor
@@ -28,7 +30,9 @@ class MyHealthSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const GlobalTheme theme = GlobalTheme();
     return Section(
+      sectionBackground: theme.blue,
       title: AppLocalizations.of(context)!.myHealth,
       titleColor: Colors.white,
       child: Center(
