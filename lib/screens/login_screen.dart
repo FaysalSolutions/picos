@@ -17,12 +17,12 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:picos/themes/global_theme.dart';
 import 'package:picos/util/backend.dart';
 import 'package:picos/util/flutter_secure_storage.dart';
 import 'package:picos/widgets/picos_body.dart';
 import 'package:picos/widgets/picos_ink_well_button.dart';
-import 'package:picos/widgets/picos_screen_frame.dart';
 import 'package:picos/gen_l10n/app_localizations.dart';
 import 'package:picos/widgets/picos_text_field.dart';
 import 'package:upgrader/upgrader.dart';
@@ -110,149 +110,161 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     final GlobalTheme theme = Theme.of(context).extension<GlobalTheme>()!;
 
-    return PicosScreenFrame(
-      body: Center(
-        child: PicosBody(
-          child: Column(
-            children: <Widget>[
-              if (!kIsWeb) UpgradeCard(),
-              const Image(
-                image: AssetImage('assets/PICOS_Logo_RGB.png'),
-              ),
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    height: 2,
-                    color: theme.black,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text:
-                          '${AppLocalizations.of(context)!.welcomeToPICOS},\n',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        // NavigationBar
+        systemNavigationBarColor: theme.white, // background
+        systemNavigationBarIconBrightness: Brightness.dark, // Icons
+
+        // StatusBar
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: theme.white,
+        body: Center(
+          child: PicosBody(
+            child: Column(
+              children: <Widget>[
+                if (!kIsWeb) UpgradeCard(),
+                const Image(
+                  image: AssetImage('assets/PICOS_Logo_RGB.png'),
+                ),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      height: 2,
+                      color: theme.black,
                     ),
-                    TextSpan(
-                      text: AppLocalizations.of(context)!
-                          .thankYouForParticipation,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              if (_backendError != null)
-                Text(
-                  _backendError!.getMessage(context),
-                  style: TextStyle(color: theme.red),
-                ),
-              const SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                width: 200,
-                child: PicosTextField(
-                  controller: _loginController,
-                  hint: AppLocalizations.of(context)!.username,
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: 200,
-                child: PicosTextField(
-                  controller: _passwordController,
-                  hint: AppLocalizations.of(context)!.password,
-                  obscureText: !_passwordVisible,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _passwordVisible
-                          ? Icons.visibility_rounded
-                          : Icons.visibility_off_rounded,
-                    ),
-                    color: theme.grey3,
-                    onPressed: () => setState(() {
-                      _passwordVisible = !_passwordVisible;
-                    }),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pushNamed(
-                          '/forgot_password_screen/forgot_password_screen',
-                        );
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.forgotPassword,
-                        style: TextStyle(
-                          height: 2,
-                          color: theme.blue,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text:
+                            '${AppLocalizations.of(context)!.welcomeToPICOS},\n',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 200,
-                child: Row(
-                  children: <Widget>[
-                    if (!kIsWeb) ...<Widget>[
-                      PicosOverflowText(
-                        text: AppLocalizations.of(context)!.rememberMe,
-                      ),
-                      Checkbox(
-                        value: _isChecked,
-                        checkColor: theme.white,
-                        activeColor: theme.darkGreen1,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isChecked = value!;
-                            _secureStorage.setIsChecked(_isChecked);
-                          });
-                        },
+                      TextSpan(
+                        text: AppLocalizations.of(context)!
+                            .thankYouForParticipation,
                       ),
                     ],
-                  ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 200,
-                child: PicosInkWellButton(
-                  disabled: _sendDisabled,
-                  onTap: _submitHandler,
-                  text: AppLocalizations.of(context)!.submit,
+                const SizedBox(
+                  height: 15,
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.all(_sponsorLogoPadding),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      child: Image(
-                        image: AssetImage('assets/BMBF.png'),
+                if (_backendError != null)
+                  Text(
+                    _backendError!.getMessage(context),
+                    style: TextStyle(color: theme.red),
+                  ),
+                const SizedBox(
+                  height: 15,
+                ),
+                SizedBox(
+                  width: 200,
+                  child: PicosTextField(
+                    controller: _loginController,
+                    hint: AppLocalizations.of(context)!.username,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 200,
+                  child: PicosTextField(
+                    controller: _passwordController,
+                    hint: AppLocalizations.of(context)!.password,
+                    obscureText: !_passwordVisible,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible
+                            ? Icons.visibility_rounded
+                            : Icons.visibility_off_rounded,
                       ),
+                      color: theme.grey3,
+                      onPressed: () => setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      }),
                     ),
-                    SizedBox(width: _sponsorLogoPadding),
-                    Expanded(
-                      child: Image(
-                        image: AssetImage('assets/Logo_MII.png'),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                            '/forgot_password_screen/forgot_password_screen',
+                          );
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)!.forgotPassword,
+                          style: TextStyle(
+                            height: 2,
+                            color: theme.blue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 200,
+                  child: Row(
+                    children: <Widget>[
+                      if (!kIsWeb) ...<Widget>[
+                        PicosOverflowText(
+                          text: AppLocalizations.of(context)!.rememberMe,
+                        ),
+                        Checkbox(
+                          value: _isChecked,
+                          checkColor: theme.white,
+                          activeColor: theme.darkGreen1,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isChecked = value!;
+                              _secureStorage.setIsChecked(_isChecked);
+                            });
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 200,
+                  child: PicosInkWellButton(
+                    disabled: _sendDisabled,
+                    onTap: _submitHandler,
+                    text: AppLocalizations.of(context)!.submit,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(_sponsorLogoPadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Image(
+                          image: AssetImage('assets/BMBF.png'),
+                        ),
+                      ),
+                      SizedBox(width: _sponsorLogoPadding),
+                      Expanded(
+                        child: Image(
+                          image: AssetImage('assets/Logo_MII.png'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
