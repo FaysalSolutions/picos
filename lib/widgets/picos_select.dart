@@ -111,9 +111,12 @@ class _PicosSelectState extends State<PicosSelect> {
             height: widget.validator == null ? null : 75,
             child: DropdownButtonFormField<String>(
               isExpanded: true,
+              alignment: AlignmentDirectional.centerStart,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(
-                  right: 5,
+                  bottom: 15,
+                  left: 15,
+                  right: 15,
                 ),
                 enabledBorder: outlineInputBorder,
                 focusedBorder: outlineInputBorder,
