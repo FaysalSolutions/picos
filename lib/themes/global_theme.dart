@@ -30,6 +30,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
     this.white = const Color(0xFFffffff),
     this.black = const Color(0xFF000000),
     this.blue = const Color(0xFF236fa8),
+    this.iceBlue = const Color(0xFFe9f1f4),
     this.red = const Color(0xFFe63329),
     this.green1 = const Color(0xFF95c11f),
     this.green2 = const Color(0xFF6eab27),
@@ -57,6 +58,9 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
 
   /// Standard: #236fa8
   final Color? blue;
+
+  /// Standard: #e9f1f4
+  final Color? iceBlue;
 
   /// Standard: #e63329
   final Color? red;
@@ -91,6 +95,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
     Color? white,
     Color? black,
     Color? blue,
+    Color? iceBlue,
     Color? red,
     Color? green1,
     Color? green2,
@@ -107,6 +112,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
       white: white ?? this.white,
       black: black ?? this.black,
       blue: blue ?? this.blue,
+      iceBlue: iceBlue ?? this.iceBlue,
       red: red ?? this.red,
       green1: green1 ?? this.green1,
       green2: green2 ?? this.green2,
@@ -134,6 +140,7 @@ class GlobalTheme extends ThemeExtension<GlobalTheme> {
       white: Color.lerp(white, other.white, t),
       black: Color.lerp(black, other.black, t),
       blue: Color.lerp(blue, other.blue, t),
+      iceBlue: Color.lerp(iceBlue, other.iceBlue, t),
       red: Color.lerp(red, other.red, t),
       green1: Color.lerp(green1, other.green1, t),
       green2: Color.lerp(green2, other.green2, t),
