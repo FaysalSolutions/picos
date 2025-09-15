@@ -16,7 +16,7 @@
 */
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import '../themes/global_theme.dart';
 
 /// Creates a standardized frame useful for most picos screens.
@@ -54,38 +54,44 @@ class PicosScreenFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalTheme theme = Theme.of(context).extension<GlobalTheme>()!;
 
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        // NavigationBar
+        systemNavigationBarColor: theme.white, // background
+        systemNavigationBarIconBrightness: Brightness.dark, // Icons
+        // StatusBar
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+      child: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
 
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      },
-      child: Container(
-        color: theme.darkGreen1,
-        child: SafeArea(
-          child: Scaffold(
-            bottomNavigationBar: bottomNavigationBar,
-            appBar: AppBar(
-              iconTheme: IconThemeData(
-                color: theme.white,
-              ),
-              centerTitle: true,
-              title: Text(
-                title ?? '',
-                style: TextStyle(
-                  color: theme.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              elevation: appBarElevation,
-              actions: appBarActions,
-              leading: leading,
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: theme.white,
+          bottomNavigationBar: bottomNavigationBar,
+          appBar: AppBar(
+            iconTheme: IconThemeData(
+              color: theme.white,
             ),
-            body: body,
+            centerTitle: true,
+            title: Text(
+              title ?? '',
+              style: TextStyle(
+                color: theme.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            elevation: appBarElevation,
+            actions: appBarActions,
+            leading: leading,
           ),
+          body: body,
         ),
       ),
     );
